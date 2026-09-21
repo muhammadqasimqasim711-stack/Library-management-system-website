@@ -1,0 +1,434 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id                     String             @id @default(cuid())
+  memberId               String             @unique // e.g. STU-2026-001, FAC-2026-042, STF-102
+  email                  String             @unique
+  passwordHash           String
+  fullName               String
+  phone                  String?
+  avatarUrl              String?
+  memberType             String             // STUDENT, FACULTY, RESEARCHER, STAFF, ADMIN
+  status                 String             @default("ACTIVE") // ACTIVE, INACTIVE, RESTRICTED, LOCKED
+  departmentId           String?
+  department             Department?        @relation(fields: [departmentId], references: [id])
+  borrowingLimitOverride Int?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  roles                  UserRole[]
+  loans                  Loan[]             @relation("BorrowerLoans")
+  issuedLoans            Loan[]             @relation("StaffIssuedLoans")
+  reservations           Reservation[]
+  fines                  Fine[]             @relation("UserFines")
+  waivedFines            Fine[]             @relation("StaffWaivedFines")
+  auditLogs              AuditLog[]         @relation("UserAuditLogs")
+  notifications          Notification[]
+  facilityBookings       FacilityBooking[]
+  purchaseRequests       PurchaseRequest[]
+  auditsConducted        InventoryAudit[]   @relation("AuditorAudits")
+  damageReportsFiled     DamageReport[]     @relation("StaffDamageReports")
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique // SUPER_ADMIN, DIRECTOR, LIBRARIAN, CIRCULATION_STAFF, etc.
+  displayName String
+  description String?
+  createdAt   DateTime         @default(now())
+  
+  users       UserRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          String           @id @default(cuid())
+  code        String           @unique // BOOK_VIEW, LOAN_ISSUE, FINE_WAIVE, etc.
+  displayName String
+  module      String           // CATALOG, CIRCULATION, FINES, INVENTORY, etc.
+  
+  roles       RolePermission[]
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model Department {
+  id        String   @id @default(cuid())
+  code      String   @unique // CS, EE, MATH, MED, LAW, BIZ
+  name      String
+  building  String
+  createdAt DateTime @default(now())
+
+  users     User[]
+  books     Book[]
+}
+
+model LibrarySection {
+  id          String   @id @default(cuid())
+  code        String   @unique // ENG-CS, SCI-PHY, REF, ARCH
+  name        String
+  building    String
+  floor       Int
+  description String?
+  createdAt   DateTime @default(now())
+
+  shelves     Shelf[]
+  books       Book[]
+}
+
+model Shelf {
+  id          String         @id @default(cuid())
+  code        String         @unique // CS-01, CS-02, MATH-A, etc.
+  name        String
+  sectionId   String
+  section     LibrarySection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  capacity    Int            @default(100)
+  rack        String?        // e.g. Rack 1, Rack 2
+
+  copies      BookCopy[]
+  audits      InventoryAudit[]
+}
+
+model Author {
+  id        String       @id @default(cuid())
+  name      String
+  biography String?
+  createdAt DateTime     @default(now())
+
+  books     BookAuthor[]
+}
+
+model Publisher {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  address   String?
+  website   String?
+  createdAt DateTime @default(now())
+
+  books     Book[]
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+
+  books       Book[]
+}
+
+model Book {
+  id                   String         @id @default(cuid())
+  title                String
+  subtitle             String?
+  isbn                 String         @unique
+  publicationYear      Int
+  edition              String?
+  language             String         @default("English")
+  description          String?
+  subject              String?
+  classificationNumber String?        // DDC or LCC, e.g. 005.74 C827d
+  coverUrl             String?
+  tags                 String?        // comma-separated
+  isArchived           Boolean        @default(false)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
+  categoryId           String?
+  category             Category?      @relation(fields: [categoryId], references: [id])
+  publisherId          String?
+  publisher            Publisher?     @relation(fields: [publisherId], references: [id])
+  departmentId         String?
+  department           Department?    @relation(fields: [departmentId], references: [id])
+  sectionId            String?
+  section              LibrarySection?@relation(fields: [sectionId], references: [id])
+
+  authors              BookAuthor[]
+  copies               BookCopy[]
+  reservations         Reservation[]
+}
+
+model BookAuthor {
+  bookId   String
+  authorId String
+  book     Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  author   Author @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@id([bookId, authorId])
+}
+
+model BookCopy {
+  id              String         @id @default(cuid())
+  bookId          String
+  book            Book           @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  barcode         String         @unique // e.g. LIB-CS-00001
+  copyNumber      Int            // 1, 2, 3...
+  shelfId         String?
+  shelf           Shelf?         @relation(fields: [shelfId], references: [id])
+  rack            String?        // Rack coordinate within shelf
+  condition       String         @default("GOOD") // NEW, GOOD, FAIR, POOR, DAMAGED
+  status          String         @default("AVAILABLE") // AVAILABLE, BORROWED, RESERVED, ON_HOLD, OVERDUE, LOST, DAMAGED, UNDER_REPAIR, MISSING, WITHDRAWN
+  acquisitionDate DateTime       @default(now())
+  purchaseCost    Float          @default(0.0)
+  vendorId        String?
+  vendor          Vendor?        @relation(fields: [vendorId], references: [id])
+  notes           String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  loans           Loan[]
+  damageReports   DamageReport[]
+  auditItems      InventoryAuditItem[]
+  assignedReservations Reservation[]
+}
+
+model Loan {
+  id          String        @id @default(cuid())
+  copyId      String
+  copy        BookCopy      @relation(fields: [copyId], references: [id])
+  userId      String
+  user        User          @relation("BorrowerLoans", fields: [userId], references: [id])
+  staffId     String?
+  staff       User?         @relation("StaffIssuedLoans", fields: [staffId], references: [id])
+  issuedAt    DateTime      @default(now())
+  dueDate     DateTime
+  returnedAt  DateTime?
+  renewCount  Int           @default(0)
+  status      String        @default("ACTIVE") // ACTIVE, RETURNED, OVERDUE, LOST
+  notes       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  fines       Fine[]
+  damageReports DamageReport[]
+}
+
+model Reservation {
+  id            String    @id @default(cuid())
+  bookId        String
+  book          Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  copyId        String?
+  assignedCopy  BookCopy? @relation(fields: [copyId], references: [id])
+  queuePosition Int
+  status        String    @default("PENDING") // PENDING, ON_HOLD, FULFILLED, CANCELLED, EXPIRED
+  notifiedAt    DateTime?
+  expiresAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Fine {
+  id          String    @id @default(cuid())
+  loanId      String?
+  loan        Loan?     @relation(fields: [loanId], references: [id])
+  userId      String
+  user        User      @relation("UserFines", fields: [userId], references: [id])
+  type        String    // OVERDUE, LOST, DAMAGE, ADMINISTRATIVE
+  amount      Float
+  paidAmount  Float     @default(0.0)
+  status      String    @default("PENDING") // PENDING, PARTIAL, PAID, WAIVED
+  reason      String
+  waivedById  String?
+  waivedBy    User?     @relation("StaffWaivedFines", fields: [waivedById], references: [id])
+  waivedAt    DateTime?
+  waiveReason String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model BorrowingPolicy {
+  id                    String   @id @default(cuid())
+  memberType            String   @unique // STUDENT, FACULTY, RESEARCHER, STAFF
+  maxActiveLoans        Int      @default(5)
+  loanDurationDays      Int      @default(14)
+  maxRenewals           Int      @default(2)
+  reservationLimit      Int      @default(3)
+  dailyFineRate         Float    @default(0.50) // $ per day
+  gracePeriodDays       Int      @default(2)
+  lostBookMultiplier    Float    @default(1.50) // 1.5x purchase cost
+  allowRenewIfReserved  Boolean  @default(false)
+  updatedAt             DateTime @updatedAt
+}
+
+model DamageReport {
+  id            String    @id @default(cuid())
+  copyId        String
+  copy          BookCopy  @relation(fields: [copyId], references: [id])
+  loanId        String?
+  loan          Loan?     @relation(fields: [loanId], references: [id])
+  staffId       String
+  staff         User      @relation("StaffDamageReports", fields: [staffId], references: [id])
+  severity      String    // MINOR, MODERATE, SEVERE, UNUSABLE
+  penaltyAmount Float
+  description   String
+  status        String    @default("PENDING") // PENDING, ASSESSED, RESOLVED, WAIVED
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model InventoryAudit {
+  id          String               @id @default(cuid())
+  code        String               @unique // AUDIT-2026-09-01
+  shelfId     String
+  shelf       Shelf                @relation(fields: [shelfId], references: [id])
+  auditorId   String
+  auditor     User                 @relation("AuditorAudits", fields: [auditorId], references: [id])
+  status      String               @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED, CANCELLED
+  totalExpected Int                @default(0)
+  totalScanned  Int                @default(0)
+  totalMatched  Int                @default(0)
+  totalMissing  Int                @default(0)
+  totalMisplaced Int               @default(0)
+  notes       String?
+  startedAt   DateTime             @default(now())
+  completedAt DateTime?
+
+  items       InventoryAuditItem[]
+}
+
+model InventoryAuditItem {
+  id              String         @id @default(cuid())
+  auditId         String
+  audit           InventoryAudit @relation(fields: [auditId], references: [id], onDelete: Cascade)
+  copyId          String?
+  copy            BookCopy?      @relation(fields: [copyId], references: [id])
+  barcode         String
+  expectedShelfId String?
+  scannedShelfId  String?
+  status          String         // MATCHED, MISPLACED, MISSING, UNEXPECTED
+  scannedAt       DateTime       @default(now())
+}
+
+model Vendor {
+  id            String            @id @default(cuid())
+  name          String            @unique
+  code          String            @unique // e.g. VEND-PEARSON
+  contactPerson String?
+  email         String?
+  phone         String?
+  address       String?
+  status        String            @default("ACTIVE")
+  createdAt     DateTime          @default(now())
+
+  copies        BookCopy[]
+  purchaseOrders PurchaseOrder[]
+}
+
+model PurchaseRequest {
+  id           String         @id @default(cuid())
+  title        String
+  author       String?
+  isbn         String?
+  publisher    String?
+  quantity     Int            @default(1)
+  estimatedCost Float
+  requesterId  String
+  requester    User           @relation(fields: [requesterId], references: [id])
+  status       String         @default("PENDING") // PENDING, APPROVED, REJECTED, ORDERED
+  reason       String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  orders       PurchaseOrder[]
+}
+
+model PurchaseOrder {
+  id          String           @id @default(cuid())
+  orderNumber String           @unique // PO-2026-001
+  requestId   String?
+  request     PurchaseRequest? @relation(fields: [requestId], references: [id])
+  vendorId    String
+  vendor      Vendor           @relation(fields: [vendorId], references: [id])
+  totalAmount Float
+  status      String           @default("ISSUED") // ISSUED, RECEIVED, CANCELLED
+  orderedAt   DateTime         @default(now())
+  receivedAt  DateTime?
+}
+
+model BudgetAllocation {
+  id          String   @id @default(cuid())
+  category    String   @unique // Book Acquisition, Digital Resources, Technology, Maintenance, Facilities
+  allocated   Float
+  committed   Float    @default(0.0)
+  spent       Float    @default(0.0)
+  fiscalYear  String   // e.g. 2026-2027
+  updatedAt   DateTime @updatedAt
+}
+
+model Facility {
+  id          String            @id @default(cuid())
+  code        String            @unique // ROOM-LIB-301
+  name        String
+  type        String            // STUDY_ROOM, GROUP_ROOM, COMPUTER_LAB, RESEARCH_CARREL, MEETING_ROOM
+  location    String            // Floor 3, East Wing
+  capacity    Int
+  status      String            @default("AVAILABLE") // AVAILABLE, MAINTENANCE, CLOSED
+  amenities   String?           // Whiteboard, Projector, AC, Power Outlets
+  createdAt   DateTime          @default(now())
+
+  bookings    FacilityBooking[]
+}
+
+model FacilityBooking {
+  id          String    @id @default(cuid())
+  facilityId  String
+  facility    Facility  @relation(fields: [facilityId], references: [id])
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  startTime   DateTime
+  endTime     DateTime
+  purpose     String?
+  status      String    @default("CONFIRMED") // CONFIRMED, COMPLETED, CANCELLED
+  createdAt   DateTime  @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   // DUE_SOON, OVERDUE, FINE, RESERVATION_AVAILABLE, GENERAL
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actor     User?    @relation("UserAuditLogs", fields: [actorId], references: [id])
+  actorName String   // Denormalized for permanent audit preservation even if user deleted
+  action    String   // BOOK_CREATE, COPY_STATUS_CHANGE, LOAN_ISSUE, LOAN_RETURN, FINE_WAIVE, etc.
+  entity    String   // BookCopy, Loan, Fine, Policy, User
+  entityId  String?
+  oldValue  String?  // JSON string
+  newValue  String?  // JSON string
+  ipAddress String?  @default("127.0.0.1")
+  result    String   @default("SUCCESS") // SUCCESS, FAILURE
+  createdAt DateTime @default(now())
+}
