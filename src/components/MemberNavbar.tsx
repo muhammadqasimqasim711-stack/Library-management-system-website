@@ -74,6 +74,15 @@ export const MemberNavbar: React.FC = () => {
           {/* Right actions: Notifications & User profile & Staff Switcher */}
           <div className="flex items-center gap-3">
             <Link
+              href="/portal/notifications"
+              className="relative p-2 text-slate-600 hover:text-blue-900 hover:bg-slate-100 rounded-lg transition-colors"
+              title="View Alerts & Notifications"
+            >
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
+            </Link>
+
+            <Link
               href="/admin/dashboard"
               className="inline-flex items-center gap-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-md border border-slate-300 transition-colors"
             >
