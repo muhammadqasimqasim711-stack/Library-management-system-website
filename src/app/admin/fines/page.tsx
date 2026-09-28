@@ -185,7 +185,7 @@ export default function AdminFinesPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600">
+          <table className="w-full text-left text-xs text-slate-600 min-w-[650px]">
             <thead className="bg-slate-50/80 text-slate-700 uppercase tracking-wider text-[11px] font-semibold border-b border-slate-200">
               <tr>
                 <th className="py-3 px-4">Member Name & ID</th>
@@ -283,8 +283,8 @@ export default function AdminFinesPage() {
 
       {/* Collect Payment Modal */}
       {payModalFine && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-sm w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-sm w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <span className="font-bold text-xs text-slate-900 uppercase tracking-wider">
                 Collect Fine Settlement
@@ -320,18 +320,18 @@ export default function AdminFinesPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setPayModalFine(null)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50"
+                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={payLoading}
-                  className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                  className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-center"
                 >
                   {payLoading ? "Processing..." : "Confirm Receipt"}
                 </button>
@@ -343,8 +343,8 @@ export default function AdminFinesPage() {
 
       {/* Waive Fine Modal (Director Audited) */}
       {waiveModalFine && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <span className="font-bold text-xs text-indigo-900 uppercase tracking-wider">
                 Authorized Executive Fine Waiver
@@ -376,18 +376,18 @@ export default function AdminFinesPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setWaiveModalFine(null)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50"
+                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={waiveLoading}
-                  className="px-4 py-1.5 rounded-lg bg-indigo-700 hover:bg-indigo-800 text-white font-semibold"
+                  className="px-4 py-1.5 rounded-lg bg-indigo-700 hover:bg-indigo-800 text-white font-semibold text-center"
                 >
                   {waiveLoading ? "Authorizing..." : "Authorize Waiver"}
                 </button>

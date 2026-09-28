@@ -45,13 +45,13 @@ export default function AdminSettingsPage() {
 
       <form onSubmit={handleSave} className="space-y-6 text-xs">
         {/* Academic Profile */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-xs space-y-4">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Building className="w-4 h-4 text-blue-600" />
             Institution & Academic Calendar
           </h2>
 
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">
                 Institution / Library Name
@@ -97,7 +97,7 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* Hardware Barcode Scanner Settings */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-xs space-y-4">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <ScanBarcode className="w-4 h-4 text-blue-600" />
             Hardware Barcode Scanner Configuration
@@ -106,7 +106,7 @@ export default function AdminSettingsPage() {
             The circulation desk supports standard USB, Bluetooth, and 2.4GHz handheld laser/imager barcode scanners.
           </p>
 
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Scanner Input Interface</label>
               <select
@@ -143,13 +143,13 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* Audit & Compliance Data Retention */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-xs space-y-4">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Database className="w-4 h-4 text-blue-600" />
             Governance, Audits & Concurrency Control
           </h2>
 
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">
                 Audit Trail Retention Policy (Days)
@@ -177,7 +177,7 @@ export default function AdminSettingsPage() {
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-xs transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-xs transition-colors"
           >
             <Save className="w-4 h-4" />
             Save Configuration Parameters

@@ -151,48 +151,50 @@ export default function AdminAcquisitionsPage() {
 
         {/* Budget Table */}
         <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-          <table className="w-full text-left text-xs text-slate-600">
-            <thead className="bg-slate-50 text-slate-700 uppercase tracking-wider text-[11px] font-semibold border-b border-slate-200">
-              <tr>
-                <th className="py-3 px-4">Budget Category</th>
-                <th className="py-3 px-4 font-mono">Allocated</th>
-                <th className="py-3 px-4 font-mono">Committed</th>
-                <th className="py-3 px-4 font-mono">Spent</th>
-                <th className="py-3 px-4 font-mono">Remaining</th>
-                <th className="py-3 px-4">Utilization</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {budgets.map((b: any) => {
-                const rem = b.allocated - b.spent - b.committed;
-                const util = Math.round(((b.spent + b.committed) / b.allocated) * 100);
-                return (
-                  <tr key={b.id} className="hover:bg-slate-50/60">
-                    <td className="py-3 px-4 font-bold text-slate-800">{b.category}</td>
-                    <td className="py-3 px-4 font-mono">${b.allocated.toLocaleString()}</td>
-                    <td className="py-3 px-4 font-mono text-amber-600">${b.committed.toLocaleString()}</td>
-                    <td className="py-3 px-4 font-mono text-blue-600">${b.spent.toLocaleString()}</td>
-                    <td className="py-3 px-4 font-mono font-bold text-emerald-700">
-                      ${rem.toLocaleString()}
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-24 bg-slate-200 rounded-full h-2 overflow-hidden">
-                          <div
-                            className={`h-2 rounded-full ${
-                              util > 85 ? "bg-rose-500" : "bg-blue-600"
-                            }`}
-                            style={{ width: `${Math.min(100, util)}%` }}
-                          />
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-slate-600 min-w-[550px]">
+              <thead className="bg-slate-50 text-slate-700 uppercase tracking-wider text-[11px] font-semibold border-b border-slate-200">
+                <tr>
+                  <th className="py-3 px-4">Budget Category</th>
+                  <th className="py-3 px-4 font-mono">Allocated</th>
+                  <th className="py-3 px-4 font-mono">Committed</th>
+                  <th className="py-3 px-4 font-mono">Spent</th>
+                  <th className="py-3 px-4 font-mono">Remaining</th>
+                  <th className="py-3 px-4">Utilization</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {budgets.map((b: any) => {
+                  const rem = b.allocated - b.spent - b.committed;
+                  const util = Math.round(((b.spent + b.committed) / b.allocated) * 100);
+                  return (
+                    <tr key={b.id} className="hover:bg-slate-50/60">
+                      <td className="py-3 px-4 font-bold text-slate-800">{b.category}</td>
+                      <td className="py-3 px-4 font-mono">${b.allocated.toLocaleString()}</td>
+                      <td className="py-3 px-4 font-mono text-amber-600">${b.committed.toLocaleString()}</td>
+                      <td className="py-3 px-4 font-mono text-blue-600">${b.spent.toLocaleString()}</td>
+                      <td className="py-3 px-4 font-mono font-bold text-emerald-700">
+                        ${rem.toLocaleString()}
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-24 bg-slate-200 rounded-full h-2 overflow-hidden">
+                            <div
+                              className={`h-2 rounded-full ${
+                                util > 85 ? "bg-rose-500" : "bg-blue-600"
+                              }`}
+                              style={{ width: `${Math.min(100, util)}%` }}
+                            />
+                          </div>
+                          <span className="font-mono text-[10px] text-slate-500">{util}%</span>
                         </div>
-                        <span className="font-mono text-[10px] text-slate-500">{util}%</span>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -244,8 +246,8 @@ export default function AdminAcquisitionsPage() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <span className="font-bold text-xs text-slate-900 uppercase tracking-wider">
                 Submit Book Purchase Request
@@ -313,18 +315,18 @@ export default function AdminAcquisitionsPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50"
+                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-center"
                 >
                   {submitting ? "Submitting..." : "Submit to Director"}
                 </button>

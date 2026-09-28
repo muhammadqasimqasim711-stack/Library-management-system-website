@@ -257,32 +257,32 @@ export default function RapidCirculationPage() {
         </div>
 
         {/* Mode Switcher Tabs with Keyboard Badges */}
-        <div className="flex items-center bg-slate-200/80 p-1 rounded-xl shadow-inner">
+        <div className="flex items-center bg-slate-200/80 p-1 rounded-xl shadow-inner w-full sm:w-auto">
           <button
             onClick={() => setActiveTab("ISSUE")}
-            className={`flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 rounded-lg text-xs font-bold transition-all ${
               activeTab === "ISSUE"
                 ? "bg-blue-600 text-white shadow-sm"
                 : "text-slate-700 hover:text-slate-900 hover:bg-slate-300/60"
             }`}
           >
-            <ScanBarcode className="w-4 h-4" />
-            Issue Book (Check-Out)
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-blue-800/40 text-[10px] text-blue-100 font-mono">
+            <ScanBarcode className="w-4 h-4 shrink-0" />
+            <span>Issue (Check-Out)</span>
+            <kbd className="hidden md:inline-block px-1.5 py-0.5 rounded bg-blue-800/40 text-[10px] text-blue-100 font-mono">
               F2
             </kbd>
           </button>
           <button
             onClick={() => setActiveTab("RETURN")}
-            className={`flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 rounded-lg text-xs font-bold transition-all ${
               activeTab === "RETURN"
                 ? "bg-emerald-600 text-white shadow-sm"
                 : "text-slate-700 hover:text-slate-900 hover:bg-slate-300/60"
             }`}
           >
-            <Undo2 className="w-4 h-4" />
-            Return Book (Check-In)
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-emerald-800/40 text-[10px] text-emerald-100 font-mono">
+            <Undo2 className="w-4 h-4 shrink-0" />
+            <span>Return (Check-In)</span>
+            <kbd className="hidden md:inline-block px-1.5 py-0.5 rounded bg-emerald-800/40 text-[10px] text-emerald-100 font-mono">
               F3
             </kbd>
           </button>
@@ -392,7 +392,7 @@ export default function RapidCirculationPage() {
       {activeTab === "ISSUE" && (
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Step 1: Member Verification Column */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <span className="h-6 w-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center">
@@ -409,7 +409,7 @@ export default function RapidCirculationPage() {
                 Scan Member ID Barcode or Type Student/Faculty ID
               </label>
               <div className="flex gap-2">
-                <div className="relative flex-1">
+                <div className="relative flex-1 min-w-0">
                   <input
                     ref={memberInputRef}
                     type="text"
@@ -424,7 +424,7 @@ export default function RapidCirculationPage() {
                 <button
                   type="submit"
                   disabled={memberLoading}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shrink-0"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 sm:px-5 py-2.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shrink-0"
                 >
                   {memberLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : "Verify ID"}
                 </button>
@@ -509,7 +509,7 @@ export default function RapidCirculationPage() {
           </div>
 
           {/* Step 2: Book Barcode Scan & Issue Execution */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <span className="h-6 w-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center">
@@ -526,7 +526,7 @@ export default function RapidCirculationPage() {
                 Scan Book Barcode Sticker
               </label>
               <div className="flex gap-2">
-                <div className="relative flex-1">
+                <div className="relative flex-1 min-w-0">
                   <input
                     ref={copyInputRef}
                     type="text"
@@ -541,7 +541,7 @@ export default function RapidCirculationPage() {
                 <button
                   type="submit"
                   disabled={copyLoading || !memberData?.isEligible}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shrink-0 disabled:opacity-50"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 sm:px-5 py-2.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shrink-0 disabled:opacity-50"
                 >
                   {copyLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : "Identify Copy"}
                 </button>
@@ -551,12 +551,12 @@ export default function RapidCirculationPage() {
             {/* Book Copy Identified Card */}
             {copyData ? (
               <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-4">
-                <div className="flex gap-3">
+                <div className="flex flex-col xs:flex-row gap-3">
                   {copyData.book.coverUrl && (
                     <img
                       src={copyData.book.coverUrl}
                       alt={copyData.book.title}
-                      className="w-16 h-22 object-cover rounded-lg shadow-xs border border-slate-200"
+                      className="w-16 h-22 object-cover rounded-lg shadow-xs border border-slate-200 shrink-0 self-start"
                     />
                   )}
                   <div className="flex-1 min-w-0">
@@ -564,11 +564,11 @@ export default function RapidCirculationPage() {
                       {copyData.book.title}
                     </div>
                     <div className="text-xs text-slate-600 mt-1">{copyData.book.authors}</div>
-                    <div className="text-xs text-slate-500 font-mono mt-0.5">
+                    <div className="text-xs text-slate-500 font-mono mt-0.5 break-words">
                       ISBN: {copyData.book.isbn} • Call: {copyData.book.classificationNumber}
                     </div>
 
-                    <div className="flex items-center gap-2 mt-2">
+                    <div className="flex flex-wrap items-center gap-2 mt-2">
                       <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                         {copyData.barcode}
                       </span>
@@ -593,7 +593,7 @@ export default function RapidCirculationPage() {
                 <button
                   onClick={handleExecuteIssue}
                   disabled={issueLoading || copyData.status !== "AVAILABLE"}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 text-center"
                 >
                   {issueLoading ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
@@ -619,7 +619,7 @@ export default function RapidCirculationPage() {
       {/* RETURN WORKFLOW INTERFACE (Section 11)                                    */}
       {/* ========================================================================= */}
       {activeTab === "RETURN" && (
-        <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 md:p-8 shadow-xs space-y-5 sm:space-y-6">
           <div className="pb-4 border-b border-slate-100">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <Undo2 className="w-5 h-5 text-emerald-600" />
@@ -636,7 +636,7 @@ export default function RapidCirculationPage() {
               Scan Book Barcode Sticker
             </label>
             <div className="flex gap-2">
-              <div className="relative flex-1">
+              <div className="relative flex-1 min-w-0">
                 <input
                   ref={returnInputRef}
                   type="text"
@@ -651,7 +651,7 @@ export default function RapidCirculationPage() {
               <button
                 type="submit"
                 disabled={returnCopyLoading}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shrink-0"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 sm:px-6 py-2.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shrink-0"
               >
                 {returnCopyLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : "Inspect Loan"}
               </button>
@@ -660,18 +660,18 @@ export default function RapidCirculationPage() {
 
           {/* Inspected Return Card */}
           {returnCopyData && (
-            <div className="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-5">
-              <div className="flex gap-4">
+            <div className="p-4 sm:p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-4 sm:space-y-5">
+              <div className="flex flex-col sm:flex-row gap-4 items-start">
                 {returnCopyData.book.coverUrl && (
                   <img
                     src={returnCopyData.book.coverUrl}
                     alt={returnCopyData.book.title}
-                    className="w-20 h-28 object-cover rounded-lg shadow-xs border border-slate-200"
+                    className="w-20 h-28 object-cover rounded-lg shadow-xs border border-slate-200 shrink-0 self-start"
                   />
                 )}
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="font-bold text-slate-900 text-base">{returnCopyData.book.title}</div>
-                  <div className="text-xs text-slate-600 mt-1 font-mono">
+                  <div className="text-xs text-slate-600 mt-1 font-mono break-words">
                     Barcode: <span className="font-bold text-blue-700">{returnCopyData.barcode}</span> • Shelf:{" "}
                     {returnCopyData.shelf?.code || "Unassigned"}
                   </div>
@@ -684,7 +684,7 @@ export default function RapidCirculationPage() {
                       <div className="font-semibold text-slate-800">
                         {returnCopyData.currentLoan.borrowerName} ({returnCopyData.currentLoan.borrowerId})
                       </div>
-                      <div className="text-slate-500 flex items-center gap-3 mt-1">
+                      <div className="text-slate-500 flex flex-wrap items-center gap-2 sm:gap-3 mt-1">
                         <span>Issued: {new Date(returnCopyData.currentLoan.issuedAt).toLocaleDateString()}</span>
                         <span>•</span>
                         <span className="font-semibold text-rose-700">
@@ -716,7 +716,7 @@ export default function RapidCirculationPage() {
                 </div>
 
                 {!isDamaged ? (
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {["NEW", "GOOD", "FAIR", "POOR"].map((cond) => (
                       <button
                         key={cond}
@@ -737,7 +737,7 @@ export default function RapidCirculationPage() {
                     <div className="text-xs font-semibold text-rose-900">
                       Damage Severity Classification
                     </div>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {(["MINOR", "MODERATE", "SEVERE", "UNUSABLE"] as const).map((sev) => (
                         <button
                           key={sev}

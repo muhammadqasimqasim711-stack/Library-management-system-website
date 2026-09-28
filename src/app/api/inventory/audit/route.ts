@@ -1,10 +1,20 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { getCurrentUser, isAdmin, hasPermission } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 
 export async function GET() {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
+      return NextResponse.json(
+        { error: "Forbidden: Admin access required" },
+        { status: 403 }
+      );
+    }
     const audits = await prisma.inventoryAudit.findMany({
       include: {
         shelf: {
@@ -34,9 +44,12 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!hasPermission(user, "INVENTORY_AUDIT")) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
       return NextResponse.json(
-        { error: "Access Denied: You do not possess the INVENTORY_AUDIT permission." },
+        { error: "Forbidden: Admin access required" },
         { status: 403 }
       );
     }
@@ -97,9 +110,12 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!hasPermission(user, "INVENTORY_AUDIT")) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
       return NextResponse.json(
-        { error: "Access Denied: You do not possess the INVENTORY_AUDIT permission." },
+        { error: "Forbidden: Admin access required" },
         { status: 403 }
       );
     }

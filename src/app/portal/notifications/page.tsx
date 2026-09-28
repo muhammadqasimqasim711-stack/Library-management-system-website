@@ -87,7 +87,7 @@ export default function MemberNotificationsPage() {
         {unreadCount > 0 && (
           <button
             onClick={handleMarkAllRead}
-            className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs px-3.5 py-2 rounded-xl border border-blue-200 transition-colors shrink-0"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs px-3.5 py-2 rounded-xl border border-blue-200 transition-colors shrink-0"
           >
             <CheckCheck className="w-4 h-4" />
             Mark All as Read ({unreadCount})
@@ -111,24 +111,24 @@ export default function MemberNotificationsPage() {
           {notifications.map((n) => (
             <div
               key={n.id}
-              className={`p-4 rounded-2xl border transition-all flex items-start justify-between gap-4 ${
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all flex items-start justify-between gap-3 sm:gap-4 ${
                 !n.read
                   ? "bg-white border-blue-200 shadow-xs ring-1 ring-blue-100"
                   : "bg-slate-50/70 border-slate-200"
               }`}
             >
-              <div className="flex items-start gap-3.5">
+              <div className="flex items-start gap-3 sm:gap-3.5 min-w-0">
                 <div className="p-2 rounded-xl bg-slate-100 shrink-0 mt-0.5">
                   {getIcon(n.type)}
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-slate-900 text-sm">{n.title}</h3>
+                    <h3 className="font-bold text-slate-900 text-sm truncate">{n.title}</h3>
                     {!n.read && (
                       <span className="h-2 w-2 rounded-full bg-blue-600 shrink-0" />
                     )}
                   </div>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">{n.message}</p>
+                  <p className="text-xs text-slate-600 mt-1 leading-relaxed break-words">{n.message}</p>
                   <span className="text-[11px] font-mono text-slate-400 mt-2 block">
                     {new Date(n.createdAt).toLocaleString()}
                   </span>

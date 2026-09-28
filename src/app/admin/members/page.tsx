@@ -100,8 +100,8 @@ export default function AdminMembersPage() {
       </div>
 
       {/* Filter and Search */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3 flex-1 min-w-[280px]">
+      <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:flex-1 sm:min-w-[280px]">
           <div className="relative flex-1">
             <input
               type="text"
@@ -115,17 +115,17 @@ export default function AdminMembersPage() {
           </div>
           <button
             onClick={fetchMembers}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-semibold"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold shrink-0"
           >
             Search
           </button>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none flex-1 sm:flex-none"
           >
             <option value="ALL">All Member Types</option>
             <option value="STUDENT">Students</option>
@@ -147,7 +147,7 @@ export default function AdminMembersPage() {
       {/* Members Table */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600">
+          <table className="w-full text-left text-xs text-slate-600 min-w-[650px]">
             <thead className="bg-slate-50/80 text-slate-700 uppercase tracking-wider text-[11px] font-semibold border-b border-slate-200">
               <tr>
                 <th className="py-3 px-4">Member Name & Email</th>
@@ -211,8 +211,8 @@ export default function AdminMembersPage() {
 
       {/* Enroll Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <span className="font-bold text-xs text-slate-900 uppercase tracking-wider">
                 Enroll University Member
@@ -275,18 +275,18 @@ export default function AdminMembersPage() {
                 </select>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50"
+                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-center"
                 >
                   {formLoading ? "Enrolling..." : "Enroll Account"}
                 </button>

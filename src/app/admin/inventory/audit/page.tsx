@@ -237,13 +237,13 @@ export default function ShelfAuditStationPage() {
       {activeAudit && (
         <div className="space-y-6">
           {/* Active Session Status Bar */}
-          <div className="bg-slate-900 text-white p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md">
+          <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md">
             <div>
               <div className="flex items-center gap-2 text-xs font-mono text-amber-400 font-semibold">
                 <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
                 AUDIT SESSION IN PROGRESS • {activeAudit.shelf.code}
               </div>
-              <h2 className="text-xl font-bold mt-0.5">{activeAudit.shelf.name}</h2>
+              <h2 className="text-lg sm:text-xl font-bold mt-0.5">{activeAudit.shelf.name}</h2>
               <div className="text-xs text-slate-400">
                 Registered Expected Copies: {activeAudit.totalExpected} • Scanned So Far:{" "}
                 {scannedItems.length}
@@ -253,7 +253,7 @@ export default function ShelfAuditStationPage() {
             <button
               onClick={handleFinalizeAudit}
               disabled={finalizing}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-colors shadow-sm flex items-center gap-1.5"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 sm:px-5 py-2.5 rounded-xl text-xs transition-colors shadow-sm flex items-center justify-center gap-1.5 w-full sm:w-auto"
             >
               <Check className="w-4 h-4" />
               Finalize Audit & Generate Report
@@ -261,13 +261,13 @@ export default function ShelfAuditStationPage() {
           </div>
 
           {/* Barcode Scanner Input */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-xs space-y-4">
             <form onSubmit={handleScanBarcode} className="space-y-2">
               <label className="block text-xs font-semibold text-slate-700">
                 Scan Book Barcode Sticker on Shelf
               </label>
               <div className="flex gap-2">
-                <div className="relative flex-1">
+                <div className="relative flex-1 min-w-0">
                   <input
                     ref={barcodeInputRef}
                     type="text"
@@ -282,7 +282,7 @@ export default function ShelfAuditStationPage() {
                 <button
                   type="submit"
                   disabled={scanLoading}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-xs font-bold shrink-0"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 sm:px-5 py-2.5 rounded-lg text-xs font-bold shrink-0"
                 >
                   {scanLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : "Verify Scan"}
                 </button>
@@ -315,7 +315,7 @@ export default function ShelfAuditStationPage() {
           </div>
 
           {/* Scanned Items Reconciliation List */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-xs space-y-4">
             <h3 className="font-bold text-slate-900 text-sm">
               Live Scanned Discrepancy Stream ({scannedItems.length} Scanned)
             </h3>
@@ -327,10 +327,10 @@ export default function ShelfAuditStationPage() {
             ) : (
               <div className="divide-y divide-slate-100">
                 {scannedItems.map((item, idx) => (
-                  <div key={idx} className="py-3 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-3">
+                  <div key={idx} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-3 text-xs">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                       <span
-                        className={`px-2 py-0.5 rounded font-mono font-bold text-[10px] ${
+                        className={`px-2 py-0.5 rounded font-mono font-bold text-[10px] shrink-0 ${
                           item.status === "MATCHED"
                             ? "bg-emerald-100 text-emerald-800"
                             : item.status === "MISPLACED"
@@ -340,15 +340,15 @@ export default function ShelfAuditStationPage() {
                       >
                         {item.status}
                       </span>
-                      <div>
-                        <div className="font-semibold text-slate-800 font-mono">{item.barcode}</div>
-                        <div className="text-[11px] text-slate-500">
+                      <div className="min-w-0">
+                        <div className="font-semibold text-slate-800 font-mono truncate">{item.barcode}</div>
+                        <div className="text-[11px] text-slate-500 truncate">
                           {item.copy ? item.copy.book.title : "Unknown item"}
                         </div>
                       </div>
                     </div>
 
-                    <div className="text-right text-slate-400 font-mono text-[11px]">
+                    <div className="text-left sm:text-right text-slate-400 font-mono text-[11px] shrink-0">
                       {item.scannedAt}
                     </div>
                   </div>

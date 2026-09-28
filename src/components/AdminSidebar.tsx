@@ -23,6 +23,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  X,
 } from "lucide-react";
 
 interface NavItem {
@@ -82,23 +83,38 @@ const navGroups: NavGroup[] = [
   },
 ];
 
-export const AdminSidebar: React.FC = () => {
+interface AdminSidebarProps {
+  isMobileDrawer?: boolean;
+  onCloseMobile?: () => void;
+}
+
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({
+  isMobileDrawer = false,
+  onCloseMobile,
+}) => {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
+  // In mobile drawer mode, never collapse
+  const isCollapsed = isMobileDrawer ? false : collapsed;
+
   return (
     <aside
-      className={`relative flex flex-col bg-slate-900 text-slate-300 border-r border-slate-800 transition-all duration-200 ease-in-out ${
-        collapsed ? "w-20" : "w-64"
-      } min-h-screen shrink-0`}
+      className={
+        isMobileDrawer
+          ? "flex flex-col bg-slate-900 text-slate-300 w-72 max-w-[85vw] h-full shadow-2xl overflow-y-auto"
+          : `hidden md:flex relative flex-col bg-slate-900 text-slate-300 border-r border-slate-800 transition-all duration-200 ease-in-out ${
+              collapsed ? "w-20" : "w-64"
+            } min-h-screen shrink-0`
+      }
     >
       {/* Brand Header */}
-      <div className="flex items-center justify-between p-4 border-b border-slate-800 h-16">
+      <div className="flex items-center justify-between p-4 border-b border-slate-800 h-16 shrink-0">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="h-9 w-9 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold shrink-0 shadow-md">
             U
           </div>
-          {!collapsed && (
+          {!isCollapsed && (
             <div>
               <div className="font-bold text-slate-100 text-sm leading-tight tracking-wide">
                 UNIVERSITY LMS
@@ -107,20 +123,30 @@ export const AdminSidebar: React.FC = () => {
             </div>
           )}
         </div>
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-slate-100 transition-colors"
-          title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-        >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
+        {isMobileDrawer ? (
+          <button
+            onClick={onCloseMobile}
+            className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-slate-100 transition-colors"
+            title="Close Menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        ) : (
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-slate-100 transition-colors"
+            title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </button>
+        )}
       </div>
 
       {/* Navigation Groups */}
       <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6 scrollbar-thin">
         {navGroups.map((group) => (
           <div key={group.label} className="space-y-1">
-            {!collapsed && (
+            {!isCollapsed && (
               <div className="px-3 text-[10px] font-semibold tracking-wider text-slate-400 uppercase mb-2">
                 {group.label}
               </div>
@@ -133,15 +159,20 @@ export const AdminSidebar: React.FC = () => {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={() => {
+                    if (isMobileDrawer && onCloseMobile) {
+                      onCloseMobile();
+                    }
+                  }}
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                     isActive
                       ? "bg-blue-600 text-white shadow-sm"
                       : "text-slate-300 hover:bg-slate-800 hover:text-slate-100"
-                  } ${collapsed ? "justify-center px-2" : ""}`}
-                  title={collapsed ? item.title : undefined}
+                  } ${isCollapsed ? "justify-center px-2" : ""}`}
+                  title={isCollapsed ? item.title : undefined}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
-                  {!collapsed && (
+                  {!isCollapsed && (
                     <div className="flex items-center justify-between w-full">
                       <span className="truncate">{item.title}</span>
                       {item.badge && (
@@ -159,16 +190,21 @@ export const AdminSidebar: React.FC = () => {
       </div>
 
       {/* Public Catalog OPAC Switcher */}
-      <div className="p-3 border-t border-slate-800 bg-slate-950/40">
+      <div className="p-3 border-t border-slate-800 bg-slate-950/40 shrink-0">
         <Link
           href="/portal/catalog"
+          onClick={() => {
+            if (isMobileDrawer && onCloseMobile) {
+              onCloseMobile();
+            }
+          }}
           className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-amber-300 bg-amber-950/30 border border-amber-900/40 hover:bg-amber-900/40 transition-colors ${
-            collapsed ? "justify-center px-2" : ""
+            isCollapsed ? "justify-center px-2" : ""
           }`}
-          title={collapsed ? "Go to Student/Faculty Portal" : undefined}
+          title={isCollapsed ? "Go to Student/Faculty Portal" : undefined}
         >
           <ExternalLink className="w-4 h-4 shrink-0" />
-          {!collapsed && <span>Go to Member OPAC</span>}
+          {!isCollapsed && <span>Go to Member OPAC</span>}
         </Link>
       </div>
     </aside>

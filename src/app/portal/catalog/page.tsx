@@ -41,12 +41,12 @@ export default function MemberCatalogPage() {
   return (
     <div className="space-y-8">
       {/* Search Hero */}
-      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-3xl p-8 sm:p-12 shadow-xl space-y-6">
+      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 shadow-xl space-y-5 sm:space-y-6">
         <div className="max-w-2xl space-y-2">
-          <span className="text-xs font-bold tracking-widest text-amber-400 uppercase">
+          <span className="text-[10px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
             Online Public Access Catalog (OPAC)
           </span>
-          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-serif font-bold text-white tracking-tight">
             Discover Academic Resources & Textbooks
           </h1>
           <p className="text-xs sm:text-sm text-slate-300">
@@ -55,27 +55,27 @@ export default function MemberCatalogPage() {
         </div>
 
         {/* Big Search Bar */}
-        <form onSubmit={handleSearch} className="max-w-3xl flex gap-2">
+        <form onSubmit={handleSearch} className="max-w-3xl flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by Title, ISBN, Author, Topic, or Call Number..."
-              className="w-full bg-white text-slate-900 rounded-xl pl-11 pr-4 py-3.5 text-sm shadow-md focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full bg-white text-slate-900 rounded-xl pl-10 pr-3 sm:pl-11 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm shadow-md focus:outline-none focus:ring-2 focus:ring-amber-400"
             />
-            <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5" />
+            <Search className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3.5 top-3.5" />
           </div>
           <button
             type="submit"
-            className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3.5 rounded-xl text-sm transition-all shadow-md shrink-0"
+            className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm transition-all shadow-md shrink-0"
           >
             Search Catalog
           </button>
         </form>
 
         {/* Availability Toggle */}
-        <div className="flex items-center gap-4 text-xs">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs">
           <span className="text-slate-300 font-medium">Filter by:</span>
           <button
             onClick={() => setAvailability("all")}
@@ -123,7 +123,7 @@ export default function MemberCatalogPage() {
             No catalog books found matching your query.
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {books.map((b) => (
               <div
                 key={b.id}
@@ -175,7 +175,7 @@ export default function MemberCatalogPage() {
                   </div>
                 </div>
 
-                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
+                <div className="pt-4 mt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
                   <div>
                     {b.availableCopies > 0 ? (
                       <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">

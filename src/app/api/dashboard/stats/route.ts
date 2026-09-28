@@ -1,8 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser, isAdmin } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
+      return NextResponse.json(
+        { error: "Forbidden: Admin access required" },
+        { status: 403 }
+      );
+    }
+
     const [
       totalBooks,
       totalCopies,

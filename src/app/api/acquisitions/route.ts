@@ -1,12 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { getCurrentUser, isAdmin, hasPermission } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
+      return NextResponse.json(
+        { error: "Forbidden: Admin access required" },
+        { status: 403 }
+      );
+    }
     const [requests, orders, vendors, budgets] = await Promise.all([
       prisma.purchaseRequest.findMany({
         include: { requester: { select: { fullName: true, memberId: true } } },

@@ -128,8 +128,8 @@ function CopiesContent() {
       </div>
 
       {/* Filter and Search controls */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3 flex-1 min-w-[280px]">
+      <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:flex-1 sm:min-w-[280px]">
           <div className="relative flex-1">
             <input
               type="text"
@@ -151,13 +151,13 @@ function CopiesContent() {
               setPage(1);
               fetchCopies();
             }}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-semibold"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold shrink-0"
           >
             Find
           </button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
           <select
             value={statusFilter}
             onChange={(e) => {
@@ -206,7 +206,7 @@ function CopiesContent() {
       {/* Copies Grid / Table */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600">
+          <table className="w-full text-left text-xs text-slate-600 min-w-[750px]">
             <thead className="bg-slate-50/80 text-slate-700 uppercase tracking-wider text-[11px] font-semibold border-b border-slate-200">
               <tr>
                 <th className="py-3 px-4">Barcode & Label</th>
@@ -343,8 +343,8 @@ function CopiesContent() {
 
       {/* Edit Copy Modal */}
       {editModalCopy && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h2 className="text-sm font-bold text-slate-900">
                 Update Physical Copy {editModalCopy.barcode}
@@ -402,18 +402,18 @@ function CopiesContent() {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setEditModalCopy(null)}
-                  className="px-3 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50"
+                  className="px-3 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={editLoading}
-                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-center"
                 >
                   {editLoading ? "Saving..." : "Update Copy Record"}
                 </button>
@@ -425,8 +425,8 @@ function CopiesContent() {
 
       {/* Barcode Label Print Modal */}
       {selectedForPrint && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <span className="font-bold text-xs uppercase tracking-wider text-slate-600">
                 Physical Barcode Label Generator
@@ -440,14 +440,14 @@ function CopiesContent() {
             </div>
 
             {/* Print Sticker Preview */}
-            <div className="p-4 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 text-center space-y-2 print-area">
+            <div className="p-4 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 text-center space-y-2 print-area overflow-hidden">
               <div className="text-[10px] uppercase font-bold tracking-widest text-slate-700">
                 UNIVERSITY LIBRARY SYSTEM
               </div>
               <div className="font-bold text-slate-900 text-xs line-clamp-1">
                 {selectedForPrint.book?.title}
               </div>
-              <div className="py-2">
+              <div className="py-2 flex justify-center overflow-hidden">
                 <BarcodeRenderer
                   value={selectedForPrint.barcode}
                   height={50}
@@ -461,16 +461,16 @@ function CopiesContent() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-2">
               <button
                 onClick={() => setSelectedForPrint(null)}
-                className="px-3 py-1.5 rounded-lg border border-slate-300 text-xs text-slate-600 hover:bg-slate-50"
+                className="px-3 py-1.5 rounded-lg border border-slate-300 text-xs text-slate-600 hover:bg-slate-50 text-center"
               >
                 Close
               </button>
               <button
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm"
+                className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm text-center"
               >
                 <Printer className="w-4 h-4" />
                 Print Label Sticker

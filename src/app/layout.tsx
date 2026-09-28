@@ -7,6 +7,12 @@ export const metadata: Metadata = {
   description: "Enterprise University Library System for Catalog, Physical Copies, Rapid Circulation & Auditing",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export default function RootLayout({
   children,
 }: {

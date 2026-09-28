@@ -77,7 +77,7 @@ export default function MemberReservationsPage() {
           {reservations.map((r) => (
             <div
               key={r.id}
-              className={`rounded-2xl border p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+              className={`rounded-2xl border p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
                 r.status === "ON_HOLD"
                   ? "bg-amber-50/60 border-amber-300"
                   : "bg-white border-slate-200"
@@ -90,7 +90,7 @@ export default function MemberReservationsPage() {
                   </span>
                   <StatusBadge status={r.status} size="sm" />
                 </div>
-                <h3 className="font-bold text-slate-900 text-base line-clamp-1">{r.book?.title}</h3>
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base line-clamp-1">{r.book?.title}</h3>
                 <div className="text-xs text-slate-500 font-mono">ISBN: {r.book?.isbn}</div>
 
                 {r.status === "ON_HOLD" && (
@@ -101,11 +101,11 @@ export default function MemberReservationsPage() {
                 )}
               </div>
 
-              <div className="flex items-center gap-4 shrink-0">
+              <div className="flex items-center justify-end sm:justify-start gap-4 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 shrink-0">
                 {r.status === "PENDING" || r.status === "ON_HOLD" ? (
                   <button
                     onClick={() => handleCancel(r.id)}
-                    className="text-rose-600 hover:text-rose-800 text-xs font-semibold px-3 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 transition-colors"
+                    className="w-full sm:w-auto text-rose-600 hover:text-rose-800 text-xs font-semibold px-3 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 transition-colors text-center"
                   >
                     Cancel Hold
                   </button>

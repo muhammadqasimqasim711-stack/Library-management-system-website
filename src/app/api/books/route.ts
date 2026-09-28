@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { getCurrentUser, isAdmin, hasPermission } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 
 export async function GET(req: Request) {
@@ -114,9 +114,12 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!hasPermission(user, "BOOK_CREATE")) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
       return NextResponse.json(
-        { error: "Access Denied: You do not possess the BOOK_CREATE permission." },
+        { error: "Forbidden: Admin access required" },
         { status: 403 }
       );
     }

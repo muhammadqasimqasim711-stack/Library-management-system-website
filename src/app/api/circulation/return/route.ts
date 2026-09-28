@@ -1,13 +1,16 @@
 import { NextResponse } from "next/server";
-import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { getCurrentUser, isAdmin, hasPermission } from "@/lib/auth";
 import { returnBookCopy } from "@/lib/circulation";
 
 export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!hasPermission(user, "LOAN_RETURN")) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
       return NextResponse.json(
-        { error: "Access Denied: You do not possess the LOAN_RETURN permission." },
+        { error: "Forbidden: Admin access required" },
         { status: 403 }
       );
     }

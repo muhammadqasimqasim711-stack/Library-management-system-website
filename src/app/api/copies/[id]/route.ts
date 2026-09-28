@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { getCurrentUser, isAdmin, hasPermission } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 
 export async function PUT(
@@ -9,9 +9,12 @@ export async function PUT(
 ) {
   try {
     const user = await getCurrentUser();
-    if (!hasPermission(user, "COPY_UPDATE")) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
       return NextResponse.json(
-        { error: "Access Denied: You do not possess the COPY_UPDATE permission." },
+        { error: "Forbidden: Admin access required" },
         { status: 403 }
       );
     }

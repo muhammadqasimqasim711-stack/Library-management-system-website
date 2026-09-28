@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { getCurrentUser, isAdmin, hasPermission } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 
 export async function GET(req: Request) {
@@ -11,15 +11,19 @@ export async function GET(req: Request) {
     const type = searchParams.get("type");
 
     const currentUser = await getCurrentUser();
+    if (!currentUser) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const where: any = {};
 
     if (status) where.status = status;
     if (type) where.type = type;
 
-    if (userId) {
-      where.userId = userId;
-    } else if (currentUser && !currentUser.roles.some((r) => ["SUPER_ADMIN", "DIRECTOR", "LIBRARIAN", "CIRCULATION_STAFF"].includes(r))) {
-      // Students/Faculty only see their own fines
+    if (isAdmin(currentUser)) {
+      if (userId) where.userId = userId;
+    } else {
+      // Regular users only see their own fines
       where.userId = currentUser.id;
     }
 
@@ -66,9 +70,12 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!hasPermission(user, "FINE_MANAGE")) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user) && !hasPermission(user, "FINE_MANAGE")) {
       return NextResponse.json(
-        { error: "Access Denied: You do not possess the FINE_MANAGE permission." },
+        { error: "Forbidden: Admin access required" },
         { status: 403 }
       );
     }
@@ -144,9 +151,12 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!hasPermission(user, "FINE_WAIVE")) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user) && !hasPermission(user, "FINE_WAIVE")) {
       return NextResponse.json(
-        { error: "Access Denied: Only Library Directors or Super Administrators possess the FINE_WAIVE permission." },
+        { error: "Forbidden: Admin access required" },
         { status: 403 }
       );
     }

@@ -87,7 +87,7 @@ export default function AdminStaffPage() {
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-colors shrink-0"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-colors shrink-0"
         >
           <Plus className="w-4 h-4" />
           Onboard Staff Member
@@ -105,7 +105,7 @@ export default function AdminStaffPage() {
           No staff records found.
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {staffList.map((st) => {
             const roleName = st.roles?.[0]?.role?.displayName || "Library Specialist";
             return (
@@ -161,8 +161,8 @@ export default function AdminStaffPage() {
 
       {/* Onboard Staff Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <span className="font-bold text-xs text-slate-900 uppercase tracking-wider">
                 Onboard Professional Library Staff
@@ -225,18 +225,18 @@ export default function AdminStaffPage() {
                 </select>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50"
+                  className="px-3 py-2 sm:py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-center font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                  className="px-4 py-2 sm:py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-center"
                 >
                   {formLoading ? "Onboarding..." : "Confirm Onboarding"}
                 </button>

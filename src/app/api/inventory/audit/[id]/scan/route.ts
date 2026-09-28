@@ -1,11 +1,23 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser, isAdmin } from "@/lib/auth";
 
 export async function POST(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
+      return NextResponse.json(
+        { error: "Forbidden: Admin access required" },
+        { status: 403 }
+      );
+    }
+
     const auditId = params.id;
     const body = await req.json();
     const { barcode } = body;

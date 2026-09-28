@@ -97,11 +97,11 @@ export default function MemberFacilitiesPage() {
           Loading available facilities...
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           {facilities.map((f) => (
             <div
               key={f.id}
-              className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs hover:border-blue-300 transition-all flex flex-col justify-between space-y-4"
+              className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-xs hover:border-blue-300 transition-all flex flex-col justify-between space-y-4"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
@@ -131,7 +131,7 @@ export default function MemberFacilitiesPage() {
                 )}
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
                 <span className="text-xs font-semibold text-emerald-700">
                   {f.bookings.length} reservations today
                 </span>
@@ -142,7 +142,7 @@ export default function MemberFacilitiesPage() {
                     setBookingError(null);
                     setBookingSuccess(null);
                   }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs transition-colors"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs transition-colors shrink-0"
                 >
                   Reserve Space
                 </button>
@@ -154,8 +154,8 @@ export default function MemberFacilitiesPage() {
 
       {/* Booking Modal */}
       {selectedFacility && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <span className="font-bold text-xs text-slate-900 uppercase tracking-wider">
                 Book {selectedFacility.name}
@@ -214,18 +214,18 @@ export default function MemberFacilitiesPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setSelectedFacility(null)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50"
+                  className="px-3 py-2 sm:py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-center font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={bookingLoading}
-                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                  className="px-4 py-2 sm:py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-center"
                 >
                   {bookingLoading ? "Confirming..." : "Confirm Reservation"}
                 </button>

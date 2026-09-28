@@ -171,7 +171,7 @@ export default function AdminBooksPage() {
       </div>
 
       {/* Search & Filters Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
         <form onSubmit={handleSearchSubmit} className="flex-1 w-full sm:w-auto relative">
           <input
             type="text"
@@ -189,14 +189,14 @@ export default function AdminBooksPage() {
           </button>
         </form>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
           <select
             value={availabilityFilter}
             onChange={(e) => {
               setAvailabilityFilter(e.target.value);
               setPage(1);
             }}
-            className="bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none flex-1 sm:flex-none"
           >
             <option value="all">All Catalog Titles</option>
             <option value="available">Available on Shelf Now</option>
@@ -215,7 +215,7 @@ export default function AdminBooksPage() {
       {/* Books Table */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600">
+          <table className="w-full text-left text-xs text-slate-600 min-w-[700px]">
             <thead className="bg-slate-50/80 text-slate-700 uppercase tracking-wider text-[11px] font-semibold border-b border-slate-200">
               <tr>
                 <th className="py-3 px-4">Title & Bibliographic Details</th>
@@ -374,8 +374,8 @@ export default function AdminBooksPage() {
 
       {/* Catalog New Book Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full p-6 space-y-5 my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5 my-4 sm:my-8">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-blue-600" />
@@ -511,18 +511,18 @@ export default function AdminBooksPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  className="px-4 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={modalLoading}
-                  className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors shadow-sm flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors shadow-sm flex items-center justify-center gap-1.5"
                 >
                   {modalLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : "Save & Generate Barcodes"}
                 </button>

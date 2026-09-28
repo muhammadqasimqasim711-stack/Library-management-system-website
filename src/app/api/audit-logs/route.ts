@@ -1,13 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { getCurrentUser, isAdmin } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!hasPermission(user, "SECURITY_AUDIT_VIEW")) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
       return NextResponse.json(
-        { error: "Access Denied: You do not possess the SECURITY_AUDIT_VIEW permission." },
+        { error: "Forbidden: Admin access required" },
         { status: 403 }
       );
     }

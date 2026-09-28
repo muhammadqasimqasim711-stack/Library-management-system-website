@@ -1,10 +1,21 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { getCurrentUser, isAdmin } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 
 export async function GET(req: Request) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
+      return NextResponse.json(
+        { error: "Forbidden: Admin access required" },
+        { status: 403 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const q = searchParams.get("q")?.trim();
     const memberType = searchParams.get("memberType");
@@ -55,9 +66,12 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!hasPermission(user, "STAFF_MANAGE")) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
       return NextResponse.json(
-        { error: "Access Denied: You do not possess the STAFF_MANAGE permission." },
+        { error: "Forbidden: Admin access required" },
         { status: 403 }
       );
     }

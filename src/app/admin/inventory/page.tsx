@@ -62,7 +62,7 @@ export default async function AdminInventoryPage() {
       </div>
 
       {/* Inventory Status Overview */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 sm:gap-3">
         <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-xs text-center">
           <div className="text-[11px] text-slate-500">Available on Shelves</div>
           <div className="text-xl font-bold font-mono text-emerald-600 mt-1">

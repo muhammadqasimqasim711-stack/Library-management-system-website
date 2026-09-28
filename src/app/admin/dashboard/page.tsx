@@ -73,11 +73,11 @@ export default function DirectorDashboard() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-2 shadow-xs focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="flex-1 sm:flex-none bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-2 shadow-xs focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             <option value="TODAY">Today (Live Stream)</option>
             <option value="CURRENT_WEEK">Current Week</option>
@@ -88,10 +88,10 @@ export default function DirectorDashboard() {
 
           <Link
             href="/admin/circulation"
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm transition-all"
+            className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-3 sm:px-4 py-2 rounded-lg shadow-sm transition-all shrink-0"
           >
             <ScanBarcode className="w-4 h-4" />
-            Circulation Station
+            <span>Circulation Desk</span>
           </Link>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function DirectorDashboard() {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <Link
               href="/admin/loans?status=OVERDUE"
               className="text-xs font-semibold bg-white text-amber-900 border border-amber-300 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors"
@@ -130,9 +130,9 @@ export default function DirectorDashboard() {
       )}
 
       {/* Primary KPI Grid (Section 6 Requirements) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Catalog Books */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
               Catalog Titles
@@ -150,7 +150,7 @@ export default function DirectorDashboard() {
         </div>
 
         {/* Physical Copies (Critical Domain Distinction: Book != Copy) */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
               Physical Copies
@@ -169,7 +169,7 @@ export default function DirectorDashboard() {
         </div>
 
         {/* Active Circulation & Overdue */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
               Active Loans
@@ -187,7 +187,7 @@ export default function DirectorDashboard() {
         </div>
 
         {/* Outstanding vs Collected Fines */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
               Outstanding Fines
@@ -206,30 +206,30 @@ export default function DirectorDashboard() {
       </div>
 
       {/* Secondary Status Breakdown Bar */}
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-xs text-center">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3 bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-xs text-center">
         <div>
-          <div className="text-xs text-slate-500">Borrowed</div>
-          <div className="text-lg font-bold font-mono text-blue-700">{kpis.borrowedCopies}</div>
+          <div className="text-[11px] sm:text-xs text-slate-500">Borrowed</div>
+          <div className="text-base sm:text-lg font-bold font-mono text-blue-700">{kpis.borrowedCopies}</div>
         </div>
         <div>
-          <div className="text-xs text-slate-500">Reserved / Holds</div>
-          <div className="text-lg font-bold font-mono text-purple-700">{kpis.reservedCopies}</div>
+          <div className="text-[11px] sm:text-xs text-slate-500">Reserved / Holds</div>
+          <div className="text-base sm:text-lg font-bold font-mono text-purple-700">{kpis.reservedCopies}</div>
         </div>
         <div>
-          <div className="text-xs text-slate-500">Overdue</div>
-          <div className="text-lg font-bold font-mono text-rose-700">{kpis.overdueCopies}</div>
+          <div className="text-[11px] sm:text-xs text-slate-500">Overdue</div>
+          <div className="text-base sm:text-lg font-bold font-mono text-rose-700">{kpis.overdueCopies}</div>
         </div>
         <div>
-          <div className="text-xs text-slate-500">Under Repair</div>
-          <div className="text-lg font-bold font-mono text-amber-700">{kpis.repairCopies}</div>
+          <div className="text-[11px] sm:text-xs text-slate-500">Under Repair</div>
+          <div className="text-base sm:text-lg font-bold font-mono text-amber-700">{kpis.repairCopies}</div>
         </div>
         <div>
-          <div className="text-xs text-slate-500">Missing</div>
-          <div className="text-lg font-bold font-mono text-red-700">{kpis.missingCopies}</div>
+          <div className="text-[11px] sm:text-xs text-slate-500">Missing</div>
+          <div className="text-base sm:text-lg font-bold font-mono text-red-700">{kpis.missingCopies}</div>
         </div>
         <div>
-          <div className="text-xs text-slate-500">Lost Total</div>
-          <div className="text-lg font-bold font-mono text-slate-800">{kpis.lostCopies}</div>
+          <div className="text-[11px] sm:text-xs text-slate-500">Lost Total</div>
+          <div className="text-base sm:text-lg font-bold font-mono text-slate-800">{kpis.lostCopies}</div>
         </div>
       </div>
 
@@ -250,35 +250,37 @@ export default function DirectorDashboard() {
             </span>
           </div>
 
-          <div className="h-48 flex items-end justify-between gap-4 pt-4 px-2">
-            {circulationTrends.map((t: any) => (
-              <div key={t.day} className="flex-1 flex flex-col items-center gap-2">
-                <div className="w-full flex items-end justify-center gap-1.5 h-36">
-                  {/* Issues bar */}
-                  <div
-                    style={{ height: `${(t.issues / 80) * 100}%` }}
-                    className="w-4 bg-blue-600 rounded-t hover:bg-blue-700 transition-all relative group"
-                  >
-                    <span className="absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] bg-slate-900 text-white px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity font-mono">
-                      {t.issues}
-                    </span>
+          <div className="overflow-x-auto min-w-0 pb-1">
+            <div className="h-48 flex items-end justify-between gap-2 sm:gap-4 pt-4 px-2 min-w-[280px]">
+              {circulationTrends.map((t: any) => (
+                <div key={t.day} className="flex-1 flex flex-col items-center gap-2">
+                  <div className="w-full flex items-end justify-center gap-1 sm:gap-1.5 h-36">
+                    {/* Issues bar */}
+                    <div
+                      style={{ height: `${(t.issues / 80) * 100}%` }}
+                      className="w-3 sm:w-4 bg-blue-600 rounded-t hover:bg-blue-700 transition-all relative group"
+                    >
+                      <span className="absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] bg-slate-900 text-white px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity font-mono">
+                        {t.issues}
+                      </span>
+                    </div>
+                    {/* Returns bar */}
+                    <div
+                      style={{ height: `${(t.returns / 80) * 100}%` }}
+                      className="w-3 sm:w-4 bg-emerald-500 rounded-t hover:bg-emerald-600 transition-all relative group"
+                    >
+                      <span className="absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] bg-slate-900 text-white px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity font-mono">
+                        {t.returns}
+                      </span>
+                    </div>
                   </div>
-                  {/* Returns bar */}
-                  <div
-                    style={{ height: `${(t.returns / 80) * 100}%` }}
-                    className="w-4 bg-emerald-500 rounded-t hover:bg-emerald-600 transition-all relative group"
-                  >
-                    <span className="absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] bg-slate-900 text-white px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity font-mono">
-                      {t.returns}
-                    </span>
-                  </div>
+                  <span className="text-[11px] sm:text-xs font-semibold text-slate-600">{t.day}</span>
                 </div>
-                <span className="text-xs font-semibold text-slate-600">{t.day}</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          <div className="flex items-center justify-center gap-6 pt-2 border-t border-slate-100 text-xs text-slate-600">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 pt-2 border-t border-slate-100 text-xs text-slate-600">
             <div className="flex items-center gap-1.5">
               <span className="h-3 w-3 rounded-xs bg-blue-600" />
               <span>Book Copies Issued</span>

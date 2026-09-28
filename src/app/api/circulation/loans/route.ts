@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, isAdmin } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
@@ -10,16 +10,22 @@ export async function GET(req: Request) {
     const search = searchParams.get("search")?.trim();
 
     const currentUser = await getCurrentUser();
+    if (!currentUser) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const whereClause: any = {};
 
     if (status) {
       whereClause.status = status;
     }
 
-    if (userId) {
-      whereClause.userId = userId;
-    } else if (currentUser && !currentUser.roles.some((r) => ["SUPER_ADMIN", "DIRECTOR", "LIBRARIAN", "CIRCULATION_STAFF"].includes(r))) {
-      // Students/Faculty can only view their own loans
+    if (isAdmin(currentUser)) {
+      if (userId) {
+        whereClause.userId = userId;
+      }
+    } else {
+      // Regular users can only view their own loans
       whereClause.userId = currentUser.id;
     }
 

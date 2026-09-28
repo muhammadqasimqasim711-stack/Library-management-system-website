@@ -44,8 +44,8 @@ export const BarcodeRenderer: React.FC<BarcodeRendererProps> = ({
   }, [value, format, width, height, displayValue, fontSize]);
 
   return (
-    <div className={`inline-flex flex-col items-center bg-white p-1 rounded border border-slate-200 ${className}`}>
-      <svg ref={svgRef} />
+    <div className={`inline-flex flex-col items-center bg-white p-1 rounded border border-slate-200 max-w-full overflow-hidden ${className}`}>
+      <svg ref={svgRef} className="max-w-full h-auto" />
     </div>
   );
 };

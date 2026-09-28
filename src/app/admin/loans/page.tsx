@@ -93,8 +93,8 @@ function LoansContent() {
       </div>
 
       {/* Filter and search */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3 flex-1 min-w-[280px]">
+      <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:flex-1 sm:min-w-[280px]">
           <div className="relative flex-1">
             <input
               type="text"
@@ -108,17 +108,17 @@ function LoansContent() {
           </div>
           <button
             onClick={fetchLoans}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-semibold"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold shrink-0"
           >
             Search
           </button>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none flex-1 sm:flex-none"
           >
             <option value="ACTIVE">Active Loans</option>
             <option value="OVERDUE">Overdue Only</option>
@@ -139,7 +139,7 @@ function LoansContent() {
       {/* Loans Table */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600">
+          <table className="w-full text-left text-xs text-slate-600 min-w-[650px]">
             <thead className="bg-slate-50/80 text-slate-700 uppercase tracking-wider text-[11px] font-semibold border-b border-slate-200">
               <tr>
                 <th className="py-3 px-4">Book Title & Barcode</th>

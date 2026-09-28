@@ -83,13 +83,13 @@ export default async function AdminFacilitiesPage() {
                   {f.bookings.map((b) => (
                     <div
                       key={b.id}
-                      className="flex items-center justify-between text-xs bg-slate-50 p-2 rounded-lg"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs bg-slate-50 p-2 rounded-lg"
                     >
-                      <div>
-                        <span className="font-semibold text-slate-800">{b.user.fullName}</span>
-                        <div className="text-[11px] text-slate-500">{b.purpose}</div>
+                      <div className="min-w-0">
+                        <span className="font-semibold text-slate-800 truncate block">{b.user.fullName}</span>
+                        <div className="text-[11px] text-slate-500 truncate">{b.purpose}</div>
                       </div>
-                      <div className="text-right text-[11px] font-mono text-slate-600">
+                      <div className="text-left sm:text-right text-[11px] font-mono text-slate-600 shrink-0">
                         {new Date(b.startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                         {" - "}
                         {new Date(b.endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}

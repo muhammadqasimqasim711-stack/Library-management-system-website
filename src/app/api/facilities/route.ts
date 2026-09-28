@@ -1,15 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, isAdmin } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 
 export async function GET() {
   try {
+    const user = await getCurrentUser();
+    const userIsAdmin = isAdmin(user);
+
     const facilities = await prisma.facility.findMany({
       include: {
         bookings: {
           where: { status: "CONFIRMED" },
-          include: { user: { select: { fullName: true, memberId: true } } },
+          include: {
+            user: userIsAdmin
+              ? { select: { fullName: true, memberId: true } }
+              : false,
+          },
           orderBy: { startTime: "asc" },
         },
       },

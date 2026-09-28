@@ -99,7 +99,7 @@ export default function AdminPoliciesPage() {
           {policies.map((p) => (
             <div
               key={p.memberType}
-              className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5"
+              className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-5"
             >
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
@@ -111,7 +111,7 @@ export default function AdminPoliciesPage() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-xs">
+              <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4 text-xs">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">
                     Max Active Loans
@@ -197,14 +197,14 @@ export default function AdminPoliciesPage() {
                 </div>
               </div>
 
-              <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+              <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-t border-slate-100">
                 <span className="text-[11px] text-slate-400">
                   Changes audited under Institutional Directive
                 </span>
                 <button
                   onClick={() => handleSavePolicy(p)}
                   disabled={savingKey === p.memberType}
-                  className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-lg transition-colors shadow-xs"
+                  className="inline-flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-lg transition-colors shadow-xs w-full sm:w-auto"
                 >
                   <Save className="w-3.5 h-3.5" />
                   {savingKey === p.memberType ? "Saving..." : "Save Policy"}

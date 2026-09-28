@@ -14,12 +14,14 @@ export interface CurrentUserSession {
 }
 
 /**
- * Returns current authenticated user session based on cookie or header.
- * Defaults to Library Director ("DIR-001") if not explicitly set, enabling immediate testing.
+ * Returns current authenticated user session based on cookie.
+ * Returns null if not authenticated.
  */
 export async function getCurrentUser(): Promise<CurrentUserSession | null> {
   const cookieStore = cookies();
-  const activeMemberId = cookieStore.get("ulms_active_user")?.value || "DIR-001";
+  const activeMemberId = cookieStore.get("ulms_active_user")?.value;
+
+  if (!activeMemberId) return null;
 
   const user = await prisma.user.findFirst({
     where: {
@@ -75,10 +77,19 @@ export async function getCurrentUser(): Promise<CurrentUserSession | null> {
 }
 
 /**
+ * Validates whether user possesses the ADMIN role or administrative privileges.
+ */
+export function isAdmin(user: CurrentUserSession | null): boolean {
+  if (!user) return false;
+  if (user.memberType === "ADMIN") return true;
+  return user.roles.some((r) => r === "ADMIN" || r === "SUPER_ADMIN");
+}
+
+/**
  * Validates whether user has a specific permission code.
  */
 export function hasPermission(user: CurrentUserSession | null, permissionCode: string): boolean {
   if (!user) return false;
-  if (user.roles.includes("SUPER_ADMIN")) return true;
+  if (isAdmin(user)) return true;
   return user.permissions.includes(permissionCode);
 }

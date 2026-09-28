@@ -94,7 +94,7 @@ export default function MemberLoansPage() {
             return (
               <div
                 key={loan.id}
-                className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
                 <div className="space-y-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -103,7 +103,7 @@ export default function MemberLoansPage() {
                     </span>
                     <StatusBadge status={isOverdue ? "OVERDUE" : loan.status} size="sm" />
                   </div>
-                  <h3 className="font-bold text-slate-900 text-base line-clamp-1">
+                  <h3 className="font-bold text-slate-900 text-sm sm:text-base line-clamp-1">
                     {loan.copy?.book?.title}
                   </h3>
                   <div className="text-xs text-slate-500 font-mono">
@@ -111,8 +111,8 @@ export default function MemberLoansPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6 shrink-0">
-                  <div className="text-right">
+                <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 sm:gap-6 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto shrink-0">
+                  <div className="text-left sm:text-right">
                     <div className="text-[10px] uppercase font-bold text-slate-400">Due Date</div>
                     <div
                       className={`font-mono text-sm font-bold ${
@@ -136,7 +136,7 @@ export default function MemberLoansPage() {
                     <button
                       onClick={() => handleRenew(loan.id)}
                       disabled={renewingId === loan.id}
-                      className="bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs px-4 py-2 rounded-xl border border-blue-200 transition-colors flex items-center gap-1.5"
+                      className="bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs px-4 py-2 rounded-xl border border-blue-200 transition-colors flex items-center gap-1.5 shrink-0"
                     >
                       <RotateCw
                         className={`w-3.5 h-3.5 ${renewingId === loan.id ? "animate-spin" : ""}`}

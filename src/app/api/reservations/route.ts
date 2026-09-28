@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, isAdmin } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 
 export async function GET(req: Request) {
@@ -11,14 +11,19 @@ export async function GET(req: Request) {
     const status = searchParams.get("status");
 
     const currentUser = await getCurrentUser();
+    if (!currentUser) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const where: any = {};
 
     if (bookId) where.bookId = bookId;
     if (status) where.status = status;
 
-    if (userId) {
-      where.userId = userId;
-    } else if (currentUser && !currentUser.roles.some((r) => ["SUPER_ADMIN", "DIRECTOR", "LIBRARIAN", "CIRCULATION_STAFF"].includes(r))) {
+    if (isAdmin(currentUser)) {
+      if (userId) where.userId = userId;
+    } else {
+      // Regular users only see their own reservations
       where.userId = currentUser.id;
     }
 
@@ -220,6 +225,13 @@ export async function DELETE(req: Request) {
 
     if (!reservation) {
       return NextResponse.json({ error: "Reservation not found" }, { status: 404 });
+    }
+
+    if (reservation.userId !== currentUser.id && !isAdmin(currentUser)) {
+      return NextResponse.json(
+        { error: "Access Denied: You cannot cancel another member's reservation." },
+        { status: 403 }
+      );
     }
 
     // Cancel reservation and release copy if it was ON_HOLD

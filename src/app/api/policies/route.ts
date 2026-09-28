@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { getCurrentUser, isAdmin, hasPermission } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 
 export async function GET() {
@@ -17,9 +17,12 @@ export async function GET() {
 export async function PUT(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!hasPermission(user, "POLICY_MANAGE")) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAdmin(user)) {
       return NextResponse.json(
-        { error: "Access Denied: Only Library Directors or Administrators can modify borrowing policies." },
+        { error: "Forbidden: Admin access required" },
         { status: 403 }
       );
     }

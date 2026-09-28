@@ -88,7 +88,7 @@ export default async function AdminSecurityPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-xs min-w-[750px]">
             <thead className="bg-slate-50 text-slate-700 text-[11px] uppercase font-bold border-b border-slate-200">
               <tr>
                 <th className="py-3 px-4 sticky left-0 bg-slate-50 z-10">Permission Code</th>
