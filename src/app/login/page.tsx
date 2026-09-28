@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Shield, BookOpen, UserCheck, AlertCircle, ArrowRight, Lock } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 const DEMO_ACCOUNTS = [
   {
@@ -29,7 +31,7 @@ const DEMO_ACCOUNTS = [
   },
 ];
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get("redirect") || "";
@@ -176,13 +178,13 @@ export default function LoginPage() {
                     setMemberId(acc.memberId);
                     handleLogin(acc.memberId);
                   }}
-                  className="w-full text-left p-2.5 rounded-lg bg-slate-900/60 hover:bg-slate-900 border border-slate-700/60 hover:border-slate-600 transition-all flex items-center justify-between"
+                  className="w-full text-left p-2.5 rounded-lg bg-slate-900/60 hover:bg-slate-900 border border-slate-700/60 hover:border-slate-600 transition-all flex items-center justify-between gap-2"
                 >
-                  <div>
-                    <div className="font-semibold text-xs text-white">{acc.name}</div>
+                  <div className="min-w-0">
+                    <div className="font-semibold text-xs text-white truncate">{acc.name}</div>
                     <div className="text-[10px] text-slate-400 font-mono">{acc.memberId}</div>
                   </div>
-                  <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${acc.badge}`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded font-medium shrink-0 ${acc.badge}`}>
                     {acc.role}
                   </span>
                 </button>
@@ -201,5 +203,19 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center text-sm">
+          Loading authentication gateway...
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }
