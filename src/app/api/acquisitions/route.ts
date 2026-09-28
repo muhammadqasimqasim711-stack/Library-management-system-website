@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser, hasPermission } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const [requests, orders, vendors, budgets] = await Promise.all([
