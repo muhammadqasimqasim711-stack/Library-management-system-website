@@ -19,15 +19,20 @@ import {
   X,
 } from "lucide-react";
 import StatusBadge from "@/components/StatusBadge";
+import IssueBookModal from "@/components/circulation/IssueBookModal";
 
 export default function AdminBooksPage() {
   const [books, setBooks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [availabilityFilter, setAvailabilityFilter] = useState("all");
+  const [subjectFilter, setSubjectFilter] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+
+  // Issue Book Modal State
+  const [issueModalBook, setIssueModalBook] = useState<any | null>(null);
 
   // New Book Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -56,6 +61,7 @@ export default function AdminBooksPage() {
     });
     if (searchQuery.trim()) params.append("q", searchQuery.trim());
     if (availabilityFilter !== "all") params.append("availability", availabilityFilter);
+    if (subjectFilter.trim()) params.append("subject", subjectFilter.trim());
 
     fetch(`/api/books?${params.toString()}`)
       .then((res) => res.json())
@@ -75,7 +81,7 @@ export default function AdminBooksPage() {
 
   useEffect(() => {
     fetchBooks();
-  }, [page, availabilityFilter]);
+  }, [page, availabilityFilter, subjectFilter]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -189,22 +195,34 @@ export default function AdminBooksPage() {
           </button>
         </form>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          <input
+            type="text"
+            value={subjectFilter}
+            onChange={(e) => {
+              setSubjectFilter(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Filter Subject..."
+            className="bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none w-28 sm:w-32"
+          />
+
           <select
             value={availabilityFilter}
             onChange={(e) => {
               setAvailabilityFilter(e.target.value);
               setPage(1);
             }}
-            className="bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none flex-1 sm:flex-none"
+            className="bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none flex-1 sm:flex-none"
           >
             <option value="all">All Catalog Titles</option>
             <option value="available">Available on Shelf Now</option>
+            <option value="borrowed">All Copies Borrowed</option>
           </select>
 
           <button
             onClick={fetchBooks}
-            className="p-2 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-600"
+            className="p-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-600"
             title="Refresh Catalog"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
@@ -259,7 +277,7 @@ export default function AdminBooksPage() {
                         )}
                         <div className="min-w-0">
                           <Link
-                            href={`/portal/catalog/${b.id}`}
+                            href={`/admin/books/${b.id}`}
                             className="font-bold text-slate-900 hover:text-blue-600 transition-colors line-clamp-1"
                           >
                             {b.title}
@@ -317,19 +335,27 @@ export default function AdminBooksPage() {
                     {/* Actions */}
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => setIssueModalBook(b)}
+                          disabled={b.availableCopies === 0}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white font-semibold text-[11px] transition-colors shadow-2xs"
+                          title={b.availableCopies > 0 ? "Issue Book to Member" : "No available physical copies"}
+                        >
+                          <CheckCircle2 className="w-3 h-3" /> Issue
+                        </button>
+                        <Link
+                          href={`/admin/books/${b.id}`}
+                          className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 transition-colors"
+                          title="Open Dedicated Book Details & Holdings"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </Link>
                         <Link
                           href={`/admin/copies?bookId=${b.id}`}
                           className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 transition-colors"
                           title="Manage Physical Copies & Barcodes"
                         >
                           <QrCode className="w-3.5 h-3.5" />
-                        </Link>
-                        <Link
-                          href={`/portal/catalog/${b.id}`}
-                          className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-blue-600 transition-colors"
-                          title="View OPAC Listing"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
                         </Link>
                         <button
                           onClick={() => handleArchiveBook(b.id, b.title)}
@@ -530,6 +556,18 @@ export default function AdminBooksPage() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Interactive Issue Book Modal */}
+      {issueModalBook && (
+        <IssueBookModal
+          isOpen={!!issueModalBook}
+          onClose={() => setIssueModalBook(null)}
+          book={issueModalBook}
+          onIssueSuccess={() => {
+            fetchBooks();
+          }}
+        />
       )}
     </div>
   );

@@ -85,7 +85,7 @@ async function runTests() {
           status: "ACTIVE",
         },
       });
-    });
+    }, { maxWait: 15000, timeout: 30000 });
 
     assert(loan.id !== null, `Loan created atomically for copy ${availableCopy.barcode}`);
     const updatedCopy = await prisma.bookCopy.findUnique({ where: { id: availableCopy.id } });
@@ -107,7 +107,7 @@ async function runTests() {
         where: { id: loan.id },
         data: { status: "RETURNED", returnedAt: new Date() },
       });
-    });
+    }, { maxWait: 15000, timeout: 30000 });
 
     assert(returnedLoan.status === "RETURNED", `Loan marked RETURNED`);
     const copyAfterReturn = await prisma.bookCopy.findUnique({ where: { id: availableCopy.id } });

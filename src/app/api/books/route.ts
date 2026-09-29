@@ -34,9 +34,18 @@ export async function GET(req: Request) {
     if (departmentId) where.departmentId = departmentId;
     if (sectionId) where.sectionId = sectionId;
 
+    const subject = searchParams.get("subject");
+    if (subject) where.subject = { contains: subject };
+
     if (availability === "available") {
       where.copies = {
         some: {
+          status: "AVAILABLE",
+        },
+      };
+    } else if (availability === "borrowed") {
+      where.copies = {
+        none: {
           status: "AVAILABLE",
         },
       };

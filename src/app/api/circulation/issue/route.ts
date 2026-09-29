@@ -8,17 +8,17 @@ export async function POST(req: Request) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    if (!isAdmin(user)) {
+    if (!isAdmin(user) && !hasPermission(user, "BOOK_ISSUE") && !hasPermission(user, "LOAN_ISSUE")) {
       return NextResponse.json(
-        { error: "Forbidden: Admin access required" },
+        { error: "Forbidden: Issuance permission required" },
         { status: 403 }
       );
     }
 
-    const { memberId, copyBarcode } = await req.json();
-    if (!memberId || !copyBarcode) {
+    const { memberId, copyBarcode, copyId } = await req.json();
+    if (!memberId || (!copyBarcode && !copyId)) {
       return NextResponse.json(
-        { error: "Member ID and Copy Barcode are required." },
+        { error: "Member ID and either Copy Barcode or Copy ID are required." },
         { status: 400 }
       );
     }
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
     const result = await issueBookCopy({
       memberId,
       copyBarcode,
+      copyId,
       staffId: user?.id,
       staffName: user?.fullName,
     });

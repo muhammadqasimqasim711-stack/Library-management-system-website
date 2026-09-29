@@ -41,44 +41,44 @@ interface NavGroup {
 
 const navGroups: NavGroup[] = [
   {
-    label: "EXECUTIVE",
+    label: "OVERVIEW",
     items: [
-      { title: "Director Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-      { title: "Reports & Analytics", href: "/admin/reports", icon: BarChart3 },
+      { title: "Library Overview", href: "/admin/dashboard", icon: LayoutDashboard },
+      { title: "Reports & Numbers", href: "/admin/reports", icon: BarChart3 },
     ],
   },
   {
-    label: "CIRCULATION DESK",
+    label: "GIVE & TAKE BACK BOOKS",
     items: [
-      { title: "Rapid Circulation", href: "/admin/circulation", icon: ScanBarcode, badge: "F2/F3" },
-      { title: "Active Loans", href: "/admin/loans", icon: Clock },
-      { title: "Hold Reservations", href: "/admin/reservations", icon: Users },
-      { title: "Fines & Penalties", href: "/admin/fines", icon: Coins },
+      { title: "Fast Book Scan", href: "/admin/circulation", icon: ScanBarcode, badge: "F2/F3" },
+      { title: "Books Out Now", href: "/admin/loans", icon: Clock },
+      { title: "Saved Books List", href: "/admin/reservations", icon: Users },
+      { title: "Late Fees & Penalties", href: "/admin/fines", icon: Coins },
     ],
   },
   {
-    label: "CATALOG & HOLDINGS",
+    label: "ALL BOOKS & PEOPLE",
     items: [
-      { title: "Master Books Catalog", href: "/admin/books", icon: BookOpen },
-      { title: "Physical Copies & Barcodes", href: "/admin/copies", icon: QrCode },
-      { title: "Member Directory", href: "/admin/members", icon: Users },
+      { title: "All Books List", href: "/admin/books", icon: BookOpen },
+      { title: "Book Copies & Barcodes", href: "/admin/copies", icon: QrCode },
+      { title: "Students & Teachers", href: "/admin/members", icon: Users },
     ],
   },
   {
-    label: "INVENTORY & LOGISTICS",
+    label: "SHELVES & ROOMS",
     items: [
-      { title: "Inventory & Shelves", href: "/admin/inventory", icon: Warehouse },
-      { title: "Shelf Audit Station", href: "/admin/inventory/audit", icon: ClipboardCheck },
-      { title: "Acquisitions & Budget", href: "/admin/acquisitions", icon: ShoppingBag },
-      { title: "Facilities & Rooms", href: "/admin/facilities", icon: Building },
+      { title: "Shelves & Book Places", href: "/admin/inventory", icon: Warehouse },
+      { title: "Check Books on Shelves", href: "/admin/inventory/audit", icon: ClipboardCheck },
+      { title: "Buying New Books", href: "/admin/acquisitions", icon: ShoppingBag },
+      { title: "Study Rooms", href: "/admin/facilities", icon: Building },
     ],
   },
   {
-    label: "SYSTEM & GOVERNANCE",
+    label: "SETTINGS & RULES",
     items: [
-      { title: "Borrowing Policies", href: "/admin/policies", icon: Sliders },
-      { title: "Security & RBAC", href: "/admin/security", icon: ShieldCheck },
-      { title: "Immutable Audit Logs", href: "/admin/audit-logs", icon: FileText },
+      { title: "Library Rules", href: "/admin/policies", icon: Sliders },
+      { title: "Staff Permissions", href: "/admin/security", icon: ShieldCheck },
+      { title: "Activity History", href: "/admin/audit-logs", icon: FileText },
     ],
   },
 ];
@@ -201,10 +201,10 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-amber-300 bg-amber-950/30 border border-amber-900/40 hover:bg-amber-900/40 transition-colors ${
             isCollapsed ? "justify-center px-2" : ""
           }`}
-          title={isCollapsed ? "Go to Student/Faculty Portal" : undefined}
+          title={isCollapsed ? "Go to Student & Teacher Site" : undefined}
         >
           <ExternalLink className="w-4 h-4 shrink-0" />
-          {!isCollapsed && <span>Go to Member OPAC</span>}
+          {!isCollapsed && <span>Go to Student & Teacher Site</span>}
         </Link>
       </div>
     </aside>

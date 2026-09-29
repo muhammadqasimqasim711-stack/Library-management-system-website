@@ -41,11 +41,11 @@ export const MemberNavbar: React.FC = () => {
   }, [pathname]);
 
   const navLinks = [
-    { label: "Search Catalog", href: "/portal/catalog", icon: Search },
-    { label: "My Loans", href: "/portal/my-loans", icon: Clock },
-    { label: "My Reservations", href: "/portal/my-reservations", icon: Users },
-    { label: "My Fines", href: "/portal/my-fines", icon: Coins },
-    { label: "Study Rooms", href: "/portal/facilities", icon: Building },
+    { label: "Find Books", href: "/portal/catalog", icon: Search },
+    { label: "Books You Have Now", href: "/portal/my-loans", icon: Clock },
+    { label: "Books You Saved", href: "/portal/my-reservations", icon: Users },
+    { label: "Your Late Fees", href: "/portal/my-fines", icon: Coins },
+    { label: "Book a Study Room", href: "/portal/facilities", icon: Building },
   ];
 
   return (
@@ -63,8 +63,7 @@ export const MemberNavbar: React.FC = () => {
                   UNIVERSITY LIBRARY
                 </span>
                 <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-slate-500 font-semibold block truncate">
-                  <span className="hidden sm:inline">Online Public Access Catalog (OPAC)</span>
-                  <span className="sm:hidden">Member OPAC</span>
+                  Find & Borrow Books
                 </span>
               </div>
             </Link>
@@ -110,7 +109,7 @@ export const MemberNavbar: React.FC = () => {
                 className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-md border border-slate-300 transition-colors"
               >
                 <Shield className="w-3.5 h-3.5 text-blue-700" />
-                <span>Admin Portal</span>
+                <span>Staff & Admin Desk</span>
               </Link>
             )}
 

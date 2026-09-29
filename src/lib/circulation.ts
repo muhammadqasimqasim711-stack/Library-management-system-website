@@ -3,9 +3,15 @@ import { logAudit } from "./audit";
 
 export interface IssueBookParams {
   memberId: string;
-  copyBarcode: string;
+  copyBarcode?: string;
+  copyId?: string;
   staffId?: string;
   staffName?: string;
+}
+
+export interface CheckEligibilityParams {
+  memberId: string;
+  bookId?: string;
 }
 
 export interface ReturnBookParams {
@@ -26,16 +32,150 @@ export interface RenewBookParams {
 }
 
 /**
- * High-Speed Issue Workflow:
- * 1. Find Member and verify Active status and restrictions.
- * 2. Lookup policy for MemberType.
- * 3. Verify Active loan count < maxActiveLoans.
- * 4. Verify unpaid fines are not causing restrictions.
- * 5. Find Physical Copy by Barcode.
- * 6. Verify Copy status (AVAILABLE or ON_HOLD for this member).
- * 7. Transactionally issue copy, set status to BORROWED, calculate dueDate, fulfill reservation if any.
+ * Evaluates full borrowing eligibility against university policy.
  */
-export async function issueBookCopy({ memberId, copyBarcode, staffId, staffName = "Circulation Desk" }: IssueBookParams) {
+export async function checkMemberEligibility({ memberId, bookId }: CheckEligibilityParams) {
+  const member = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { memberId: memberId.trim() },
+        { email: memberId.trim() },
+        { id: memberId.trim() },
+      ],
+    },
+    include: {
+      department: true,
+      loans: {
+        where: { status: { in: ["ACTIVE", "OVERDUE"] } },
+        include: {
+          copy: {
+            include: {
+              book: true,
+              shelf: true,
+            },
+          },
+        },
+        orderBy: { dueDate: "asc" },
+      },
+      fines: {
+        where: { status: "PENDING" },
+      },
+      reservations: {
+        where: { status: { in: ["PENDING", "ON_HOLD"] } },
+        include: { book: true },
+      },
+    },
+  });
+
+  if (!member) {
+    return {
+      eligible: false,
+      reasons: [`Member with ID/Email "${memberId}" not found in university directory.`],
+      member: null,
+    };
+  }
+
+  const reasons: string[] = [];
+
+  if (member.status === "RESTRICTED" || member.status === "LOCKED" || member.status === "INACTIVE") {
+    reasons.push(`Member account status is ${member.status}. Circulation services are suspended.`);
+  }
+
+  const policy = await prisma.borrowingPolicy.findUnique({
+    where: { memberType: member.memberType },
+  }) || {
+    maxActiveLoans: 5,
+    loanDurationDays: 14,
+    maxRenewals: 2,
+    reservationLimit: 3,
+    dailyFineRate: 0.50,
+    gracePeriodDays: 2,
+    lostBookMultiplier: 1.5,
+    allowRenewIfReserved: false,
+  };
+
+  const allowedLimit = member.borrowingLimitOverride || policy.maxActiveLoans;
+  const activeLoansCount = member.loans.length;
+
+  if (activeLoansCount >= allowedLimit) {
+    reasons.push(
+      `Borrowing limit reached: Member has ${activeLoansCount} active loan(s) (Maximum allowed: ${allowedLimit} for ${member.memberType}).`
+    );
+  }
+
+  // Check overdue loans
+  const now = new Date();
+  const overdueLoans = member.loans.filter(
+    (l) => l.status === "OVERDUE" || (l.dueDate && new Date(l.dueDate) < now)
+  );
+  if (overdueLoans.length > 0) {
+    reasons.push(
+      `Member has ${overdueLoans.length} overdue book(s) that must be returned before issuing new materials.`
+    );
+  }
+
+  // Outstanding fines
+  const totalPendingFines = member.fines.reduce(
+    (acc, f) => acc + (f.amount - f.paidAmount),
+    0
+  );
+  if (totalPendingFines > 10.0) {
+    reasons.push(
+      `Member has unpaid pending fines totaling $${totalPendingFines.toFixed(2)} (Policy fine limit is $10.00).`
+    );
+  }
+
+  // If specific book is requested, verify duplicate loan restriction
+  if (bookId) {
+    const alreadyBorrowing = member.loans.some((l) => l.copy.bookId === bookId);
+    if (alreadyBorrowing) {
+      reasons.push(`Member already holds an active loan for another copy of this same title.`);
+    }
+  }
+
+  const dueDate = new Date(now.getTime() + policy.loanDurationDays * 24 * 60 * 60 * 1000);
+
+  return {
+    eligible: reasons.length === 0,
+    reasons,
+    member: {
+      id: member.id,
+      memberId: member.memberId,
+      fullName: member.fullName,
+      email: member.email,
+      phone: member.phone,
+      memberType: member.memberType,
+      status: member.status,
+      department: member.department?.name || "General",
+    },
+    activeLoansCount,
+    maxLoans: allowedLimit,
+    overdueCount: overdueLoans.length,
+    pendingFinesTotal: totalPendingFines,
+    policy: {
+      loanDurationDays: policy.loanDurationDays,
+      maxActiveLoans: policy.maxActiveLoans,
+      dailyFineRate: policy.dailyFineRate,
+    },
+    calculatedDueDate: dueDate.toISOString(),
+    activeLoans: member.loans,
+  };
+}
+
+/**
+ * Unified Issue Workflow (Supports Book-Centered and Barcode-Centered Issuance)
+ */
+export async function issueBookCopy({
+  memberId,
+  copyBarcode,
+  copyId,
+  staffId,
+  staffName = "Circulation Desk",
+}: IssueBookParams) {
+  if (!copyBarcode && !copyId) {
+    throw new Error("A Copy Barcode or Copy ID must be specified.");
+  }
+
   // 1. Find member
   const member = await prisma.user.findFirst({
     where: {
@@ -80,8 +220,9 @@ export async function issueBookCopy({ memberId, copyBarcode, staffId, staffName 
   }
 
   // 3. Find Physical Book Copy
+  const copyWhere = copyId ? { id: copyId } : { barcode: copyBarcode!.trim() };
   const copy = await prisma.bookCopy.findUnique({
-    where: { barcode: copyBarcode.trim() },
+    where: copyWhere,
     include: {
       book: true,
       shelf: { include: { section: true } },
@@ -89,14 +230,14 @@ export async function issueBookCopy({ memberId, copyBarcode, staffId, staffName 
   });
 
   if (!copy) {
-    throw new Error(`No physical copy found with barcode "${copyBarcode}".`);
+    throw new Error(`No physical copy found with ${copyId ? `ID "${copyId}"` : `barcode "${copyBarcode}"`}.`);
   }
 
   if (copy.status === "BORROWED") {
     throw new Error(`This copy (${copy.barcode}) is currently borrowed by another member.`);
   }
 
-  if (copy.status === "LOST" || copy.status === "WITHDRAWN" || copy.status === "UNDER_REPAIR") {
+  if (copy.status === "LOST" || copy.status === "WITHDRAWN" || copy.status === "UNDER_REPAIR" || copy.status === "DAMAGED") {
     throw new Error(`Copy cannot be issued because its status is ${copy.status}.`);
   }
 
@@ -118,8 +259,14 @@ export async function issueBookCopy({ memberId, copyBarcode, staffId, staffName 
   const issuedAt = new Date();
   const dueDate = new Date(issuedAt.getTime() + policy.loanDurationDays * 24 * 60 * 60 * 1000);
 
-  // 5. Atomic transaction
+  // 5. Atomic transaction with concurrency check
   const result = await prisma.$transaction(async (tx) => {
+    // Concurrency verification: lock copy and ensure still available
+    const liveCopy = await tx.bookCopy.findUnique({ where: { id: copy.id } });
+    if (!liveCopy || (liveCopy.status !== "AVAILABLE" && liveCopy.status !== "ON_HOLD")) {
+      throw new Error(`Physical copy ${copy.barcode} is no longer available for issuance (status: ${liveCopy?.status || "UNKNOWN"}).`);
+    }
+
     // Update copy status
     const updatedCopy = await tx.bookCopy.update({
       where: { id: copy.id },
@@ -150,8 +297,18 @@ export async function issueBookCopy({ memberId, copyBarcode, staffId, staffName 
       },
     });
 
+    // Create notification for borrower
+    await tx.notification.create({
+      data: {
+        userId: member.id,
+        title: "Book Issued",
+        message: `"${copy.book.title}" (${copy.barcode}) has been checked out to you. Due date: ${dueDate.toLocaleDateString()}.`,
+        type: "GENERAL",
+      },
+    });
+
     return { loan: newLoan, copy: updatedCopy, member };
-  });
+  }, { maxWait: 15000, timeout: 30000 });
 
   // Audit log
   await logAudit({
@@ -385,7 +542,7 @@ export async function returnBookCopy({
     }
 
     return { updatedLoan, createdFine };
-  });
+  }, { maxWait: 15000, timeout: 30000 });
 
   // Audit log
   await logAudit({

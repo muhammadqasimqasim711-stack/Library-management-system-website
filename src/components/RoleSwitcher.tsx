@@ -17,66 +17,66 @@ const DEMO_PERSONAS: RoleOption[] = [
   {
     memberId: "DIR-001",
     name: "Dr. Eleanor Vance",
-    role: "Library Director",
+    role: "Library Boss / Director",
     type: "STAFF",
     badgeColor: "bg-indigo-600 text-white",
-    description: "Executive policies, budgets, staff, fine waivers, and comprehensive KPIs",
+    description: "Can see all reports, change rules, and forgive late fees",
   },
   {
     memberId: "CIRC-001",
     name: "Sarah Jenkins",
-    role: "Circulation Staff",
+    role: "Book Desk Worker",
     type: "STAFF",
     badgeColor: "bg-emerald-600 text-white",
-    description: "Rapid barcode scanning, instant issue/return, condition inspection",
+    description: "Gives books to members, takes them back, and scans barcodes",
   },
   {
     memberId: "LIB-001",
     name: "Marcus Chen, MLIS",
-    role: "Librarian & Cataloger",
+    role: "Librarian & Book Maker",
     type: "STAFF",
     badgeColor: "bg-sky-600 text-white",
-    description: "Catalog titles, editions, barcode generation, shelf management",
+    description: "Adds new books, makes barcodes, and puts books on shelves",
   },
   {
     memberId: "INV-001",
     name: "David Miller",
-    role: "Inventory Auditor",
+    role: "Shelf Checker",
     type: "STAFF",
     badgeColor: "bg-amber-600 text-white",
-    description: "Shelf inventory audit, misplaced and missing book reconciliation",
+    description: "Checks books on shelves to see if any are lost or in the wrong place",
   },
   {
     memberId: "STU-2026-001",
     name: "Muhammad Ali",
-    role: "Student (Active)",
+    role: "Student (Good Standing)",
     type: "STUDENT",
     badgeColor: "bg-blue-600 text-white",
-    description: "Standard borrowing policy (14 days, 5 max), OPAC search, holds",
+    description: "Can borrow up to 5 books for 14 days and save books",
   },
   {
     memberId: "STU-2026-003",
     name: "James Chen",
-    role: "Student (Restricted)",
+    role: "Student (Blocked / Has Late Fee)",
     type: "STUDENT",
     badgeColor: "bg-rose-600 text-white",
-    description: "Overdue books & unpaid fines trigger system checkout restriction",
+    description: "Has late books or late fees and cannot borrow more right now",
   },
   {
     memberId: "FAC-2026-001",
     name: "Prof. Alan Turing",
-    role: "Faculty Member",
+    role: "Teacher / Faculty",
     type: "FACULTY",
     badgeColor: "bg-purple-600 text-white",
-    description: "Extended borrowing (45 days, 15 max), course reserves",
+    description: "Can borrow up to 15 books for 45 days",
   },
   {
     memberId: "ADMIN-001",
     name: "Dr. Alexander Wright",
-    role: "Super Administrator",
+    role: "Main Library Manager",
     type: "ADMIN",
     badgeColor: "bg-slate-900 text-white",
-    description: "Global system configuration, RBAC matrix, and audit monitoring",
+    description: "Full control over all parts of the library system",
   },
 ];
 
@@ -157,10 +157,10 @@ export const RoleSwitcher: React.FC = () => {
       <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
         <span className="hidden sm:flex items-center gap-1.5 font-semibold tracking-wide text-amber-400">
           <Sparkles className="w-3.5 h-3.5" />
-          UNIVERSITY RBAC ENGINE:
+          TEST AS ANY USER:
         </span>
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <span className="text-slate-300 hidden xs:inline">Active:</span>
+          <span className="text-slate-300 hidden xs:inline">Current User:</span>
           {activePersona ? (
             <>
               <span className={`px-2 py-0.5 rounded font-medium text-[11px] sm:text-xs ${activePersona.badgeColor}`}>
@@ -171,7 +171,7 @@ export const RoleSwitcher: React.FC = () => {
             </>
           ) : (
             <span className="px-2 py-0.5 rounded font-medium text-[11px] sm:text-xs bg-slate-800 text-slate-400 border border-slate-700">
-              Unauthenticated Guest
+              Not Logged In
             </span>
           )}
         </div>
@@ -193,15 +193,15 @@ export const RoleSwitcher: React.FC = () => {
           className="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2 sm:px-2.5 py-1 rounded text-xs transition-colors shrink-0"
         >
           <RefreshCw className={`w-3 h-3 ${isSwitching ? "animate-spin" : ""}`} />
-          <span className="hidden sm:inline">Switch Role / Persona</span>
-          <span className="sm:hidden">Switch Persona</span>
+          <span className="hidden sm:inline">Switch User Account</span>
+          <span className="sm:hidden">Switch User</span>
         </button>
 
         {isOpen && (
           <div className="fixed sm:absolute inset-x-2 sm:inset-x-auto sm:right-4 top-10 sm:top-9 sm:w-96 max-w-sm sm:max-w-none mx-auto sm:mx-0 bg-white text-slate-900 rounded-lg shadow-2xl border border-slate-200 p-3 z-50">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100 mb-2">
-              <span className="font-bold text-slate-800 text-xs sm:text-sm">Select Institutional Persona</span>
-              <span className="text-[10px] sm:text-xs text-slate-500">Live RBAC Simulation</span>
+              <span className="font-bold text-slate-800 text-xs sm:text-sm">Choose User to Test As</span>
+              <span className="text-[10px] sm:text-xs text-slate-500">Quick Test Switcher</span>
             </div>
             <div className="space-y-1.5 max-h-[75vh] sm:max-h-96 overflow-y-auto pr-1">
               {DEMO_PERSONAS.map((p) => (

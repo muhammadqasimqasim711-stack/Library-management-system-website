@@ -65,6 +65,22 @@ export async function GET(req: Request) {
     const maxLoans = member.borrowingLimitOverride || policy?.maxActiveLoans || 5;
     const totalPendingFines = member.fines.reduce((acc, f) => acc + (f.amount - f.paidAmount), 0);
 
+    const borrowingHistory = await prisma.loan.findMany({
+      where: {
+        userId: member.id,
+        status: { in: ["RETURNED", "LOST"] },
+      },
+      include: {
+        copy: {
+          include: {
+            book: true,
+          },
+        },
+      },
+      orderBy: { returnedAt: "desc" },
+      take: 25,
+    });
+
     return NextResponse.json({
       member: {
         id: member.id,
@@ -80,6 +96,7 @@ export async function GET(req: Request) {
         isEligible: member.status === "ACTIVE" && member.loans.length < maxLoans,
         totalPendingFines,
         loans: member.loans,
+        borrowingHistory,
         fines: member.fines,
         reservations: member.reservations,
       },

@@ -8,6 +8,14 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const user = await getCurrentUser();
+    const canViewBorrowers =
+      isAdmin(user) ||
+      hasPermission(user, "BORROWER_VIEW") ||
+      hasPermission(user, "LOAN_VIEW") ||
+      user?.memberType === "STAFF" ||
+      user?.memberType === "ADMIN";
+
     const book = await prisma.book.findUnique({
       where: { id: params.id },
       include: {
@@ -25,11 +33,20 @@ export async function GET(
             },
             loans: {
               where: { status: { in: ["ACTIVE", "OVERDUE"] } },
-              select: {
-                id: true,
-                dueDate: true,
-                status: true,
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    memberId: true,
+                    fullName: true,
+                    memberType: true,
+                    email: true,
+                    department: { select: { name: true } },
+                  },
+                },
               },
+              orderBy: { issuedAt: "desc" },
+              take: 1,
             },
           },
           orderBy: { copyNumber: "asc" },
@@ -37,11 +54,15 @@ export async function GET(
         reservations: {
           where: { status: { in: ["PENDING", "ON_HOLD"] } },
           orderBy: { queuePosition: "asc" },
-          select: {
-            id: true,
-            queuePosition: true,
-            status: true,
-            userId: true,
+          include: {
+            user: {
+              select: {
+                id: true,
+                memberId: true,
+                fullName: true,
+                memberType: true,
+              },
+            },
           },
         },
       },
@@ -51,14 +72,117 @@ export async function GET(
       return NextResponse.json({ error: "Book not found." }, { status: 404 });
     }
 
-    const availableCopies = book.copies.filter((c) => c.status === "AVAILABLE").length;
+    // Fetch historical loans for this book's copies
+    const historicalLoans = await prisma.loan.findMany({
+      where: {
+        copy: { bookId: params.id },
+        status: { in: ["RETURNED", "LOST"] },
+      },
+      include: {
+        copy: {
+          select: {
+            id: true,
+            barcode: true,
+            copyNumber: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            memberId: true,
+            fullName: true,
+            memberType: true,
+          },
+        },
+      },
+      orderBy: { returnedAt: "desc" },
+      take: 50,
+    });
+
     const totalCopies = book.copies.length;
+    const availableCopies = book.copies.filter((c) => c.status === "AVAILABLE").length;
+    const borrowedCopies = book.copies.filter((c) => c.status === "BORROWED" || c.status === "OVERDUE").length;
+    const reservedCopies = book.copies.filter((c) => c.status === "RESERVED" || c.status === "ON_HOLD").length;
+    const lostCopies = book.copies.filter((c) => c.status === "LOST").length;
+    const damagedCopies = book.copies.filter((c) => c.status === "DAMAGED" || c.status === "UNDER_REPAIR").length;
+
+    // Process copies with borrower info if authorized
+    const processedCopies = book.copies.map((copy) => {
+      const activeLoan = copy.loans[0] || null;
+      let currentBorrower = null;
+
+      if (activeLoan && canViewBorrowers) {
+        currentBorrower = {
+          loanId: activeLoan.id,
+          memberId: activeLoan.user.memberId,
+          name: activeLoan.user.fullName,
+          memberType: activeLoan.user.memberType,
+          email: activeLoan.user.email,
+          department: activeLoan.user.department?.name || null,
+          issuedAt: activeLoan.issuedAt,
+          dueDate: activeLoan.dueDate,
+          status: activeLoan.status,
+          renewCount: activeLoan.renewCount,
+        };
+      }
+
+      return {
+        id: copy.id,
+        copyNumber: copy.copyNumber,
+        barcode: copy.barcode,
+        status: copy.status,
+        condition: copy.condition,
+        rack: copy.rack,
+        shelf: copy.shelf,
+        location: copy.shelf
+          ? `${copy.shelf.section?.name || "Main Library"} / Shelf ${copy.shelf.code}${copy.rack ? ` (${copy.rack})` : ""}`
+          : "Unassigned Shelf",
+        acquisitionDate: copy.acquisitionDate,
+        purchaseCost: copy.purchaseCost,
+        currentBorrower,
+      };
+    });
+
+    // Active loans list for the Current Loans tab
+    const activeLoans = processedCopies
+      .filter((c) => c.currentBorrower !== null)
+      .map((c) => ({
+        copyId: c.id,
+        barcode: c.barcode,
+        copyNumber: c.copyNumber,
+        ...c.currentBorrower!,
+      }));
+
+    // Historical loans (mask borrower if unauthorized)
+    const processedHistory = historicalLoans.map((hl) => ({
+      loanId: hl.id,
+      copyBarcode: hl.copy.barcode,
+      copyNumber: hl.copy.copyNumber,
+      borrowerName: canViewBorrowers ? hl.user.fullName : "Protected Member",
+      memberId: canViewBorrowers ? hl.user.memberId : "PROTECTED",
+      memberType: canViewBorrowers ? hl.user.memberType : "MEMBER",
+      issuedAt: hl.issuedAt,
+      returnedAt: hl.returnedAt,
+      status: hl.status,
+    }));
 
     return NextResponse.json({
       book: {
         ...book,
+        copies: processedCopies,
+        activeLoans,
+        historicalLoans: processedHistory,
+        summary: {
+          totalCopies,
+          availableCopies,
+          borrowedCopies,
+          reservedCopies,
+          lostCopies,
+          damagedCopies,
+        },
         availableCopies,
         totalCopies,
+        borrowedCopies,
         isReservable: availableCopies === 0 && totalCopies > 0,
         pendingReservationsCount: book.reservations.length,
       },
