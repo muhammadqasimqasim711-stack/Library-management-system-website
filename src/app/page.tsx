@@ -48,10 +48,10 @@ export default async function HomePage() {
           </div>
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Link
-              href="/portal/catalog"
+              href="/portal"
               className="text-xs font-medium text-slate-300 hover:text-white px-2.5 sm:px-3 py-1.5 rounded-lg hover:bg-slate-800 transition-colors"
             >
-              Member OPAC
+              Student & Faculty Portal
             </Link>
             {userIsAdmin && (
               <Link
@@ -148,7 +148,7 @@ export default async function HomePage() {
                   href={user ? "/portal/catalog" : "/login?redirect=/admin/dashboard"}
                   className="w-full inline-flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2.5 sm:py-3 px-4 rounded-xl text-xs sm:text-sm transition-all shadow-md"
                 >
-                  {user ? "Admin Only (Go to OPAC)" : "Sign In to Access Admin Suite"}
+                  {user ? "Admin Only (Go to Student Portal)" : "Sign In to Access Admin Suite"}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               )}
@@ -161,37 +161,37 @@ export default async function HomePage() {
               <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-amber-600/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
                 <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <h2 className="text-xl sm:text-2xl font-serif font-bold text-white">Student & Faculty OPAC</h2>
+              <h2 className="text-xl sm:text-2xl font-serif font-bold text-white">Student & Faculty Portal (OPAC)</h2>
               <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                Public search catalog, instant physical copy availability checks, loan renewals, reservations, and study room bookings.
+                Modern academic library portal to search books, check shelf availability, renew loans online, and reserve books.
               </p>
 
               <div className="space-y-2 pt-2 text-xs text-slate-300">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Faceted Catalog Search with Department & Section Filters</span>
+                  <span>Search Books & Browse by Academic Subject</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Physical Copy Shelf Navigator (Building, Floor, Shelf, Rack)</span>
+                  <span>Check Available Copies & Find Exact Shelf Locations</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Automated Loan Extension / 1-Click Renewals</span>
+                  <span>1-Click Online Book Renewals</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Hold Queue Management with Ready-for-Pickup Alerts</span>
+                  <span>My Reservations with Ready-for-Pickup Alerts</span>
                 </div>
               </div>
             </div>
 
             <div className="pt-6 mt-6 border-t border-slate-700/60">
               <Link
-                href="/portal/catalog"
+                href="/portal"
                 className="w-full inline-flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2.5 sm:py-3 px-4 rounded-xl text-xs sm:text-sm transition-all shadow-md"
               >
-                Search Public Catalog (OPAC)
+                Enter Student & Faculty Portal
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
